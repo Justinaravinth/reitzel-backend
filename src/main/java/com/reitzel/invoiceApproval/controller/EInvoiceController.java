@@ -56,13 +56,13 @@ public class EInvoiceController extends BaseController  {
 	}
 	
 	@GetMapping("/getEInvoiceByDocId")
-	public ResponseEntity<List<EInvoiceDTO>> getEInvoiceByDocId(@RequestParam List<String> docId) {
+	public ResponseEntity<EInvoiceDTO> getEInvoiceByDocId(@RequestParam String docId) {
 		String methodName = "getEInvoiceByDocId()";
 		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
 		String errorMsg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<>();
 		ResponseDTO responseDTO = null;
-		List<EInvoiceDTO> eInvoiceDTO= new ArrayList<>();
+		EInvoiceDTO eInvoiceDTO= new EInvoiceDTO();
 		try {
 			eInvoiceDTO = eInvoiceService.getEInvoicePayloadByDocId(docId);
 
@@ -71,6 +71,7 @@ public class EInvoiceController extends BaseController  {
 			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
 		}
 		if (StringUtils.isEmpty(errorMsg)) {
+			responseObjectsMap.put("eInvoiceDTO", eInvoiceDTO);
 			
 		} else {
 			responseDTO = createServiceResponseError(responseObjectsMap, "EInvoice Details information receive failed",

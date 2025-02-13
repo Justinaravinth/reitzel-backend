@@ -10,19 +10,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionDetailsDTO {
+	
 	@JsonProperty("TaxSch")
-    private String TaxSch = "GST";
+    private String TaxSch;
 
     @JsonProperty("SupTyp")
     private String SupTyp;
 
     @JsonProperty("IgstOnIntra")
-    private String IgstOnIntra = "N";
+    private String IgstOnIntra;
 
     @JsonProperty("RegRev")
-    private String RegRev ="Y";
+    private String RegRev ;
 
     @JsonProperty("EcmGstin")
-    private String EcmGstin = "33AACCR4566P1ZW";
+    private String EcmGstin = null;
 
 }

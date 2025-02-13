@@ -8,10 +8,10 @@ import lombok.Data;
 public class EWayBillDetailsDTO {
 	
 	@JsonProperty("TransId")
-    private String transId = "12AWGPV7107B1Z1";
+    private String transId = null;
 
     @JsonProperty("TransName")
-    private String transName = "XYZ EXPORTS";
+    private String transName = null;
 
     @JsonProperty("Distance")
     private int distance = 100;

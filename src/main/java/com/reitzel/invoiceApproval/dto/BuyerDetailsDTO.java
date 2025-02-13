@@ -39,9 +39,9 @@ public class BuyerDetailsDTO {
     private String Stcd;
 
     @JsonProperty("Ph")
-    private String Ph = "9876543210";
+    private String Ph;
 
     @JsonProperty("Em")
-    private String Em = "jeni@31101995@gmail.com";
+    private String Em ;
 
 }

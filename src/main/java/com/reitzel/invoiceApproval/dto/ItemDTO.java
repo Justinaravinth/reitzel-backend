@@ -24,16 +24,16 @@ public class ItemDTO {
     private String HsnCd;
 
     @JsonProperty("Barcde")
-    private String Barcde ="12345";
+    private String Barcde ;
 
     @JsonProperty("Qty")
     private int Qty;
 
     @JsonProperty("FreeQty")
-    private int FreeQty = 0;
+    private int FreeQty ;
 
     @JsonProperty("Unit")
-    private String Unit = "NOS";
+    private String Unit;
 
     @JsonProperty("UnitPrice")
     private double UnitPrice;
@@ -42,10 +42,10 @@ public class ItemDTO {
     private double TotAmt;
 
     @JsonProperty("Discount")
-    private double Discount = 0;
+    private double Discount;
 
     @JsonProperty("PreTaxVal")
-    private double PreTaxVal = 0;
+    private double PreTaxVal;
 
     @JsonProperty("AssAmt")
     private double AssAmt;
@@ -63,30 +63,30 @@ public class ItemDTO {
     private double SgstAmt;
 
     @JsonProperty("CesRt")
-    private double CesRt = 0;
+    private double CesRt;
 
     @JsonProperty("CesAmt")
-    private double CesAmt = 0;
+    private double CesAmt;
 
     @JsonProperty("CesNonAdvlAmt")
-    private double CesNonAdvlAmt = 0;
+    private double CesNonAdvlAmt;
 
     @JsonProperty("StateCesRt")
-    private double StateCesRt = 0;
+    private double StateCesRt;
 
     @JsonProperty("StateCesAmt")
-    private double StateCesAmt = 0;
+    private double StateCesAmt;
 
     @JsonProperty("StateCesNonAdvlAmt")
-    private double StateCesNonAdvlAmt = 0;
+    private double StateCesNonAdvlAmt;
 
     @JsonProperty("OthChrg")
-    private double OthChrg = 0;
+    private double OthChrg;
 
     @JsonProperty("TotItemVal")
     private double TotItemVal;
 
     @JsonProperty("BchDtls")
-    private BchDtlsDTO BchDtls;
+    private BchDtlsDTO BchDtls=null;
 
 }

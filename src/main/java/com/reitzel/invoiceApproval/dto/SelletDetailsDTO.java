@@ -12,24 +12,24 @@ import lombok.NoArgsConstructor;
 public class SelletDetailsDTO {
 	
 	@JsonProperty("Gstin")
-	private String Gstin="29AACCR4566P1ZL";
+	private String Gstin;
 	@JsonProperty("LglNm")
-    private String LglNm="REITZEL INDIA PRIVATE LIMITED";
+    private String LglNm;
 	@JsonProperty("TrdNm")
-    private String TrdNm="REITZEL INDIA PRIVATE LIMITED";
+    private String TrdNm;
 	@JsonProperty("Addr1")
-    private String Addr1="SY NO. 98 AND 99, KIADB INDUSTRIAL AREA,ANCHEPALYA VILLAGE, KUNIGAL TALUK";
+    private String Addr1;
 	@JsonProperty("Addr2")
-    private String Addr2="TUMAKURU";
+    private String Addr2;
 	@JsonProperty("Loc")
-    private String Loc="TUMAKURU";
+    private String Loc;
 	@JsonProperty("Pin")
-    private int Pin=572126;
+    private int Pin;
 	@JsonProperty("Stcd")
-    private String Stcd="29";
+    private String Stcd;
 	@JsonProperty("Ph")
-    private String Ph="9876543210";
+    private String Ph;
 	@JsonProperty("Em")
-    private String Em="abc@gmail.com";
+    private String Em;
 
 }

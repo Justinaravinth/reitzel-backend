@@ -12,22 +12,22 @@ import lombok.NoArgsConstructor;
 public class ExportDetailsDTO {
 	
 	@JsonProperty("ShipBNo")
-    private String ShipBNo = "A-248";
+    private String ShipBNo = null;
 
     @JsonProperty("ShipBDt")
-    private String ShipBDt = "01/08/2024";
+    private String ShipBDt = null;
 
     @JsonProperty("Port")
-    private String Port = "INABG1";
+    private String Port = null;
 
     @JsonProperty("RefClm")
-    private String RefClm = "N";
+    private String RefClm = null;
 
     @JsonProperty("ForCur")
-    private String ForCur = "AED";
+    private String ForCur = null;
 
     @JsonProperty("CntCode")
-    private String CntCode = "AE";
+    private String CntCode = "NA";
 
     @JsonProperty("ExpDuty")
     private double ExpDuty = 0;

@@ -1,6 +1,5 @@
 package com.reitzel.invoiceApproval.repo;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -68,7 +67,8 @@ public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 			+ "       igstamt, \r\n"
 			+ "       sgstamt, \r\n"
 			+ "       cgstamt, \r\n"
-			+ "       itemtotal \r\n"
+			+ "       itemtotal, \r\n"
+			+ "       unit \r\n"
 			+ "FROM einvoice a where a.docid=?1 order by slno asc")
 	List<Object[]> getChargeDetails(String docId);
 
@@ -84,5 +84,11 @@ public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 
 	@Query(nativeQuery = true,value = "select a.* from einvoice a where a.docid=?1")
 	List<EInvoiceVO> getDocidDetails(String docId);
+
+	@Query(nativeQuery = true,value = "SELECT  taxsch,case when revcharge='No' then 'N'else 'Y' end revcharge,case when igstonintra='No' then 'N'else 'Y' end igstonintra,\r\n"
+			+ "       upper(sellergstin)sellergstin,upper(sellerlegalname)sellerlegalname,upper(sellertradename)sellertradename,upper(selleradd1)selleradd1,upper(selleradd2)selleradd2,upper(sellerlocation)sellerlocation,sellerpincode,sellerstcd\r\n"
+			+ "FROM einvoice \r\n"
+			+ "WHERE docid = ?1 group by taxsch,revcharge,igstonintra,sellergstin,sellerlegalname,sellertradename,selleradd1,selleradd2,sellerlocation,sellerpincode,sellerstcd")
+	Object[] getHeaders(String docId);
 
 }

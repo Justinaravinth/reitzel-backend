@@ -29,10 +29,13 @@ public class EInvoiceDTO {
     private BuyerDetailsDTO BuyerDtls;
 
     @JsonProperty("DispDtls")
-    private DispatchDetailsDTO DispDtls;
+    private DispatchDetailsDTO DispDtls=null;
 
     @JsonProperty("ShipDtls")
-    private ShippingDetailsDTO ShipDtls;
+    private ShippingDetailsDTO ShipDtls=null;
+    
+    @JsonProperty("ItemList")
+    private List<ItemDTO> ItemList;
 
     @JsonProperty("ValDtls")
     private ValueDetailsDTO ValDtls;
@@ -41,9 +44,8 @@ public class EInvoiceDTO {
     private ExportDetailsDTO ExpDtls;
 
     @JsonProperty("EwbDtls")
-    private EWayBillDetailsDTO EwbDtls;
+    private EWayBillDetailsDTO EwbDtls=null;
 
-    @JsonProperty("ItemList")
-    private List<ItemDTO> ItemList;
+    
 
 }

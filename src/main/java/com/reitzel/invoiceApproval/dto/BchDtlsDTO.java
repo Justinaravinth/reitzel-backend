@@ -12,12 +12,12 @@ import lombok.NoArgsConstructor;
 public class BchDtlsDTO {
 	
 	@JsonProperty("Nm")
-    private String nm = "123456";
+    private String nm ;
 
     @JsonProperty("ExpDt")
-    private String expDt = "01/08/2024";
+    private String expDt ;
 
     @JsonProperty("WrDt")
-    private String wrDt = "01/09/2024";
+    private String wrDt ;
 
 }

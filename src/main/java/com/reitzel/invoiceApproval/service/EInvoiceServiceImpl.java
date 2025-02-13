@@ -6,14 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.reitzel.invoiceApproval.dto.BchDtlsDTO;
 import com.reitzel.invoiceApproval.dto.BuyerDetailsDTO;
@@ -35,21 +28,8 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 	@Autowired
 	EInvoiceRepo eInvoiceRepo;
+
 	
-	@Value("${einv.client.id}")
-    private String clientId;
-
-    @Value("${einv.client.secret}")
-    private String clientSecret;
-
-    @Value("${einv.gstin}")
-    private String gstin;
-
-    @Value("${einv.user.name}")
-    private String userName;
-
-    @Value("${einv.auth.token}")
-    private String authToken;
 
 	@Override
 	public List<EInvoiceVO> getEInvoiceByDocId(String docId) {
@@ -59,26 +39,28 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 	}
 
 	@Override
-	public List<EInvoiceDTO> getEInvoicePayloadByDocId(List<String> docIds) {
+	public EInvoiceDTO getEInvoicePayloadByDocId(String docIds) {
 
-		List<EInvoiceDTO> eInvoiceDTOList = new ArrayList<>();
-
-		
-
+		EInvoiceDTO eInvoiceDTO = new EInvoiceDTO();
 		// Iterate through each docId in the set
-		for (String docIdArray : docIds) {
-			String docId = docIdArray;
+		
+			String docId = docIds;
 			Object[] headerDetails = eInvoiceRepo.getHeaderDetails(docId);
+			Object[] header=eInvoiceRepo.getHeaders(docId);
 
 			if (headerDetails.length > 0 && headerDetails[0] instanceof Object[]) {
 				Object[] nestedArray = (Object[]) headerDetails[0];
+				Object[] head = (Object[]) header[0];
 
 				// Create and populate an EInvoiceDTO object
-				EInvoiceDTO eInvoiceDTO = new EInvoiceDTO();
+				
 
 				// Populate TransactionDetailsDTO
 				TransactionDetailsDTO transactionDetailsDTO = new TransactionDetailsDTO();
 				transactionDetailsDTO.setSupTyp(nestedArray[2].toString());
+				transactionDetailsDTO.setTaxSch(head[0].toString());
+				transactionDetailsDTO.setRegRev(head[1].toString());
+				transactionDetailsDTO.setIgstOnIntra(head[2].toString());
 				eInvoiceDTO.setTranDtls(transactionDetailsDTO);
 
 				// Populate DocumentDetailsDTO
@@ -93,10 +75,19 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 				eInvoiceDTO.setDocDtls(documentDetailsDTO);
 				
 				SelletDetailsDTO selletDetailsDTO= new SelletDetailsDTO();
+				selletDetailsDTO.setGstin(head[3].toString());
+				selletDetailsDTO.setLglNm(head[4].toString());
+				selletDetailsDTO.setTrdNm(head[5].toString());
+				selletDetailsDTO.setAddr1(head[6].toString());
+				selletDetailsDTO.setAddr2(head[7].toString());
+				selletDetailsDTO.setLoc(head[8].toString());
+				selletDetailsDTO.setPin(Integer.parseInt(head[9].toString()));
+				selletDetailsDTO.setStcd(head[10].toString());
+				selletDetailsDTO.setPh(null);
+				selletDetailsDTO.setEm(null);
 				eInvoiceDTO.setSellerDtls(selletDetailsDTO);
 				
 				DispatchDetailsDTO dd= new DispatchDetailsDTO();
-				eInvoiceDTO.setDispDtls(dd);
 
 				// Populate BuyerDetailsDTO
 				BuyerDetailsDTO buyerDetailsDTO = new BuyerDetailsDTO();
@@ -109,16 +100,17 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 				buyerDetailsDTO.setLoc(nestedArray[10].toString());
 				buyerDetailsDTO.setPin(Integer.parseInt(nestedArray[11].toString()));
 				buyerDetailsDTO.setStcd(nestedArray[12].toString());
+				buyerDetailsDTO.setPh(null);
+				buyerDetailsDTO.setEm(null);
 				eInvoiceDTO.setBuyerDtls(buyerDetailsDTO);
 				
 				ExportDetailsDTO expDtls = new ExportDetailsDTO();
 				eInvoiceDTO.setExpDtls(expDtls);
 				
 				EWayBillDetailsDTO eWayBillDetailsDTO= new EWayBillDetailsDTO();
-				eInvoiceDTO.setEwbDtls(eWayBillDetailsDTO);
+				
 				
 				ShippingDetailsDTO sd= new ShippingDetailsDTO();
-				eInvoiceDTO.setShipDtls(sd);
 				
 
 				// Populate ValueDetailsDTO
@@ -157,47 +149,20 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 					itemDTO.setSgstAmt(Double.parseDouble(item[10].toString()));
 					itemDTO.setCgstAmt(Double.parseDouble(item[11].toString()));
 					itemDTO.setTotItemVal(Double.parseDouble(item[12].toString()));
+					itemDTO.setUnit(item[13].toString());
 					BchDtlsDTO bch= new BchDtlsDTO();
-					itemDTO.setBchDtls(bch);
 					itemList.add(itemDTO);
 				}
 
 				eInvoiceDTO.setItemList(itemList);
 
 				// Add the populated EInvoiceDTO to the list
-				eInvoiceDTOList.add(eInvoiceDTO);
 			}
-		}
-		for(EInvoiceDTO eInvoiceDTO1:eInvoiceDTOList)
-		{
-			String url = "https://einv1api.gstsandbox.nic.in/eicore/v1.03/Invoice";
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("client_id", clientId);
-            headers.set("client_secret", clientSecret);
-            headers.set("gstin", gstin);
-            headers.set("user_name", userName);
-            headers.set("authtoken", authToken);
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<EInvoiceDTO> request = new HttpEntity<>(eInvoiceDTO1, headers);
-            RestTemplate restTemplate = new RestTemplate();
-
-            try {
-                ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-                if (response.getStatusCode() == HttpStatus.OK) {
-                    // Handle success
-                    System.out.println("Response: " + response.getBody());
-                } else {
-                    // Handle error
-                    System.out.println("Error: " + response.getStatusCode());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                // Handle exceptions (timeout, connectivity issues, etc.)
-            }
-		}
-		return eInvoiceDTOList;
+			return eInvoiceDTO;
 	}
+		
+			
+//		
 
 	private String formatDate(String dateString) {
 		try {
@@ -215,8 +180,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			return null; // In case of parsing error, you can return a default or error value
 		}
 	}
-	
-	
+
 //	@Scheduled(cron = "0 */1 * * * ?") // Runs every 1 minute
 //    public void processEInvoices() {
 //        System.out.println("Running E-Invoice service every 1 minute...");
@@ -248,7 +212,5 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 //        
 //        
 //    }
-	
-
 
 }

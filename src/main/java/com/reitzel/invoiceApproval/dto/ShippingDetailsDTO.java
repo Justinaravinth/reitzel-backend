@@ -8,27 +8,27 @@ import lombok.Data;
 public class ShippingDetailsDTO {
 	
 	@JsonProperty("Gstin")
-    private String gstin = "29AACCR4566P1ZL";
+    private String gstin;
 
     @JsonProperty("LglNm")
-    private String lglNm = "REITZEL INDIA PRIVATE LIMITED";
+    private String lglNm ;
 
     @JsonProperty("TrdNm")
-    private String trdNm = "REITZEL INDIA PRIVATE LIMITED";
+    private String trdNm ;
 
     @JsonProperty("Addr1")
-    private String addr1 = "SY NO. 98 AND 99, KIADB INDUSTRIAL AREA,ANCHEPALYA VILLAGE, KUNIGAL TALUK";
+    private String addr1;
 
     @JsonProperty("Addr2")
-    private String addr2 = "TUMAKURU";
+    private String addr2;
 
     @JsonProperty("Loc")
-    private String loc = "TUMAKURU";
+    private String loc;
 
     @JsonProperty("Pin")
-    private int pin = 572126;
+    private int pin;
 
     @JsonProperty("Stcd")
-    private String stcd = "29";
+    private String stcd;
 
 }
