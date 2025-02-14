@@ -1,7 +1,9 @@
 package com.reitzel.invoiceApproval.controller;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 
 import javax.crypto.Cipher;
@@ -26,8 +28,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reitzel.invoiceApproval.dto.IRNResponseDTO;
 import com.reitzel.invoiceApproval.dto.InvoiceResponseDTO;
 import com.reitzel.invoiceApproval.dto.PayloadDTO;
+import com.reitzel.invoiceApproval.entity.EInvoiceVO;
 import com.reitzel.invoiceApproval.entity.IRNResponseVO;
 import com.reitzel.invoiceApproval.entity.InvoiceResponseVO;
+import com.reitzel.invoiceApproval.repo.EInvoiceRepo;
 import com.reitzel.invoiceApproval.repo.IRNResponseRepo;
 import com.reitzel.invoiceApproval.repo.InvoiceResponseRepo;
 import com.reitzel.invoiceApproval.service.EInvoiceService;
@@ -38,6 +42,9 @@ public class EinvoiceAuthController {
 
 	@Autowired
 	EInvoiceService eInvoiceService;
+	
+	@Autowired
+	EInvoiceRepo eInvoiceRepo;
 	
 	@Autowired
 	InvoiceResponseRepo invoiceResponseRepo;
@@ -136,8 +143,23 @@ public class EinvoiceAuthController {
 					irnResponseVO.setIrn(decryptedMap.get("Irn").toString());
 					irnResponseVO.setDocid(docId);
 					irnResponseVO.setSignedInvoice(signedInvoice);
-					irnResponseVO.setSignedQRCode(signedQRCode);
+					irnResponseVO.setSignedQRCode(signedQRCode);					
 					irnResponseRepo.save(irnResponseVO);
+					
+					List<EInvoiceVO> eInvoiceVOs = eInvoiceRepo.getDocidDetails(docId);
+					List<EInvoiceVO> updatedEInvoiceVOs = new ArrayList<>();
+
+					for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {  
+					    eInvoiceVO.setAckno(irnResponseVO.getAckNo());
+					    eInvoiceVO.setAckdate(irnResponseVO.getAckDt());
+					    eInvoiceVO.setIrn(irnResponseVO.getIrn());
+					    eInvoiceVO.setSignedqrcode(irnResponseVO.getSignedQRCode());
+					    
+					    updatedEInvoiceVOs.add(eInvoiceVO); // ✅ Add to a separate list
+					}
+
+					eInvoiceRepo.saveAll(updatedEInvoiceVOs);
+					
 		        }
 		    }
 		    return irnResponse;

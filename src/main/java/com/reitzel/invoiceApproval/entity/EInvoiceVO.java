@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -87,6 +88,14 @@ public class EInvoiceVO {
 	private double itemtotal;
 	
 	private String ackno;
+	
+	private String ackdate;
+	
+	private String irn;
+	
+	@Lob
+	@Column(columnDefinition = "CLOB")
+	private String signedqrcode;
 	
 
 }
