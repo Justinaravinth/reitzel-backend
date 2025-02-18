@@ -93,6 +93,12 @@ public class EInvoiceVO {
 	
 	private String irn;
 	
+	private String geneinvoice;
+	
+	private String apicall;
+	
+	private String irnstatus;
+	
 	@Lob
 	@Column(columnDefinition = "CLOB")
 	private String signedqrcode;

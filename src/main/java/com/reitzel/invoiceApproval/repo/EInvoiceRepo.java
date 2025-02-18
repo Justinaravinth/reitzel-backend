@@ -79,7 +79,7 @@ public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 			+ "                         group by docid")
 	Set<Object[]> getDocId(String docDate);
 
-	@Query(nativeQuery = true,value = "select docid from irnpending")
+	@Query(nativeQuery = true,value = "select docid,docdate from einvoicegenarate")
 	List<Object[]> getPendingIRNDetails();
 
 	@Query(nativeQuery = true,value = "select a.* from einvoice a where a.docid=?1")
