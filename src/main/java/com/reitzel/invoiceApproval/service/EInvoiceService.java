@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
+import com.reitzel.invoiceApproval.dto.EwayBillDTO;
 import com.reitzel.invoiceApproval.entity.EInvoiceVO;
 
 @Service
@@ -20,6 +21,8 @@ public interface EInvoiceService {
 	Map<String, Object> createEinvoice(List<String> docId) throws JsonProcessingException;
 
 	String generateIRN(List<String> docid);
+
+	EwayBillDTO getEWayBillByDocId(String docId);
 
 
 }

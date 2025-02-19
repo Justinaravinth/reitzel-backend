@@ -91,4 +91,11 @@ public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 			+ "WHERE docid = ?1 group by taxsch,revcharge,igstonintra,sellergstin,sellerlegalname,sellertradename,selleradd1,selleradd2,sellerlocation,sellerpincode,sellerstcd")
 	Object[] getHeaders(String docId);
 
+	
+	@Query(nativeQuery =true,value ="select e.irn,e.distance,e.transmode,e.transid,e.transname,e.transdocno,e.transdocdate,e.vehicleno,e.vehicletype,\r\n"
+			+ "e.buyeradd1,e.add2,e.buyerlocation,e.buyerpincode,e.buyerstcd,e.buyerlegalname from einvoice e where docid='EXP/24-25/1016'\r\n"
+			+ "GROUP BY e.irn,e.distance,e.transmode,e.transid,e.transname,e.transdocno,e.transdocdate,e.vehicleno,e.vehicletype,\r\n"
+			+ "e.buyeradd1,e.add2,e.buyerlocation,e.buyerpincode,e.buyerstcd,e.buyerlegalname;")
+	Object[] getEWayBillDetails(String docId);
+
 }

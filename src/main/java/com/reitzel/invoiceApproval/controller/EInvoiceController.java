@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.reitzel.invoiceApproval.common.CommonConstant;
 import com.reitzel.invoiceApproval.common.UserConstants;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
+import com.reitzel.invoiceApproval.dto.EwayBillDTO;
 import com.reitzel.invoiceApproval.dto.ResponseDTO;
 import com.reitzel.invoiceApproval.entity.EInvoiceVO;
 import com.reitzel.invoiceApproval.service.EInvoiceService;
@@ -79,6 +80,32 @@ public class EInvoiceController extends BaseController  {
 		}
 		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
 		return ResponseEntity.ok().body(eInvoiceDTO);
+	}
+
+	@GetMapping("/getEWayBillByDocId")
+	public ResponseEntity<EwayBillDTO> getEWayBillByDocId(@RequestParam String docId) {
+		String methodName = "getEWayBillByDocId()";
+		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
+		String errorMsg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<>();
+		ResponseDTO responseDTO = null;
+		EwayBillDTO ewayBillDTO= new EwayBillDTO();
+		try {
+			ewayBillDTO = eInvoiceService.getEWayBillByDocId(docId);
+
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
+		}
+		if (StringUtils.isEmpty(errorMsg)) {
+			responseObjectsMap.put("ewayBillDTO", ewayBillDTO);
+			
+		} else {
+			responseDTO = createServiceResponseError(responseObjectsMap, "EWayBill Details information receive failed",
+					errorMsg);
+		}
+		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
+		return ResponseEntity.ok().body(ewayBillDTO);
 	}
 
 }

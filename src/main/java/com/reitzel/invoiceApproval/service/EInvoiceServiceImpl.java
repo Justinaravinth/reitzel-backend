@@ -32,6 +32,8 @@ import com.reitzel.invoiceApproval.dto.DispatchDetailsDTO;
 import com.reitzel.invoiceApproval.dto.DocumentDetailsDTO;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
 import com.reitzel.invoiceApproval.dto.EWayBillDetailsDTO;
+import com.reitzel.invoiceApproval.dto.EwayBillDTO;
+import com.reitzel.invoiceApproval.dto.ExpShipDetailsDTO;
 import com.reitzel.invoiceApproval.dto.ExportDetailsDTO;
 import com.reitzel.invoiceApproval.dto.IRNResponseDTO;
 import com.reitzel.invoiceApproval.dto.InvoiceResponseDTO;
@@ -39,6 +41,7 @@ import com.reitzel.invoiceApproval.dto.ItemDTO;
 import com.reitzel.invoiceApproval.dto.PayloadDTO;
 import com.reitzel.invoiceApproval.dto.SelletDetailsDTO;
 import com.reitzel.invoiceApproval.dto.ShippingDetailsDTO;
+import com.reitzel.invoiceApproval.dto.TransDetailsDTO;
 import com.reitzel.invoiceApproval.dto.TransactionDetailsDTO;
 import com.reitzel.invoiceApproval.dto.ValueDetailsDTO;
 import com.reitzel.invoiceApproval.entity.EInvoiceVO;
@@ -212,14 +215,14 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 	@Override
 	public Map<String, Object> createEinvoice(List<String> docIds) throws JsonProcessingException {
-		
-		String message= null;
+
+		String message = null;
 		List<IRNResponseDTO> irnResponse = new ArrayList<>();
 		for (String docId : docIds) {
-			
+
 			List<EInvoiceVO> eInvoiceVOs = eInvoiceRepo.getDocidDetails(docId);
 			List<EInvoiceVO> updatedEInvoiceVOs = new ArrayList<>();
-			
+
 			String userName = "";
 			String gstin = "";
 			String clientId = "";
@@ -240,7 +243,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			}
 
 			IRNResponseVO irnResponseVO = new IRNResponseVO();
-			
+
 			InvoiceResponseDTO invoiceResponseDTO = new InvoiceResponseDTO();
 			PayloadDTO payloadDTO = new PayloadDTO();
 
@@ -266,7 +269,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			RestTemplate restTemplate = new RestTemplate();
 			try {
 				ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-				
+
 				System.out.println("Raw Response: " + response.getBody());
 				InvoiceResponseVO invoiceResponseVO = new InvoiceResponseVO();
 				invoiceResponseVO.setDocid(docId);
@@ -299,7 +302,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 						ObjectMapper objectMapper3 = new ObjectMapper();
 						Map<String, Object> decryptedMap = objectMapper3.readValue(decryptedText, Map.class);
 
-						IRNResponseDTO iRNResponseDTO= new IRNResponseDTO();
+						IRNResponseDTO iRNResponseDTO = new IRNResponseDTO();
 						// Extract the 'AckNo' value from the map
 						iRNResponseDTO.setAckNo(decryptedMap.get("AckNo").toString());
 						iRNResponseDTO.setAckDt(decryptedMap.get("AckDt").toString());
@@ -311,7 +314,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 						String signedQRCode = decryptedMap.get("SignedQRCode").toString();
 //					byte[] signedQRCodeBytes = signedQRCode.getBytes(StandardCharsets.UTF_8);
 						iRNResponseDTO.setSignedQRCode(signedQRCode);
-						
+
 						irnResponse.add(iRNResponseDTO);
 						irnResponseVO.setAckNo(decryptedMap.get("AckNo").toString());
 						irnResponseVO.setAckDt(decryptedMap.get("AckDt").toString());
@@ -321,8 +324,6 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 						irnResponseVO.setSignedInvoice(signedInvoice);
 						irnResponseVO.setSignedQRCode(signedQRCode);
 						irnResponseRepo.save(irnResponseVO);
-
-						
 
 						for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
 							eInvoiceVO.setAckno(irnResponseVO.getAckNo());
@@ -336,15 +337,14 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 						eInvoiceRepo.saveAll(updatedEInvoiceVOs);
 					}
-				}
-				else {
+				} else {
 					for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
 						eInvoiceVO.setIrnstatus("F");
 						updatedEInvoiceVOs.add(eInvoiceVO);
 					}
 					eInvoiceRepo.saveAll(updatedEInvoiceVOs);
 				}
-				message="IRN Genaretd Successfully";
+				message = "IRN Genaretd Successfully";
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null; // Handle errors properly based on your business logic
@@ -416,7 +416,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			if (!docIds.isEmpty()) {
 				System.out.println(" Process Success.");
 				createEinvoice(docIds);
-				
+
 			} else {
 				System.out.println("No docIds found to process.");
 			}
@@ -425,26 +425,71 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		}
 
 	}
-	
-	
+
 	@Override
-	public String generateIRN(List<String>docid)
-	{
-		int i=0;
-		for(String docId: docid)
-		{
-			List<EInvoiceVO> eInvoiceVOs= new ArrayList<>();
-			List<EInvoiceVO> eInvoiceVO= eInvoiceRepo.getDocidDetails(docId);
-			for(EInvoiceVO eInvoiceVO2:eInvoiceVO)
-			{
+	public String generateIRN(List<String> docid) {
+		int i = 0;
+		for (String docId : docid) {
+			List<EInvoiceVO> eInvoiceVOs = new ArrayList<>();
+			List<EInvoiceVO> eInvoiceVO = eInvoiceRepo.getDocidDetails(docId);
+			for (EInvoiceVO eInvoiceVO2 : eInvoiceVO) {
 				eInvoiceVO2.setGeneinvoice("T");
 				eInvoiceVOs.add(eInvoiceVO2);
 				i++;
 			}
 			eInvoiceRepo.saveAll(eInvoiceVOs);
 		}
-		return "Successfull Docid"+i;
+		return "Successfull Docid" + i;
+
+	}
+
+	@Override
+	public EwayBillDTO getEWayBillByDocId(String docIds) {
+
+		EwayBillDTO ewayBillDTO = new EwayBillDTO();
 		
+		
+		// Iterate through each docId in the set
+
+		String docId = docIds;
+		Object[] eWayBillDetails = eInvoiceRepo.getEWayBillDetails(docId);
+
+		if (eWayBillDetails.length > 0 && eWayBillDetails[0] instanceof Object[]) {
+
+			Object[] nestedArray = (Object[]) eWayBillDetails[0];
+
+			TransDetailsDTO transDetailsDTO = new TransDetailsDTO();
+
+			transDetailsDTO.setDistance(Integer.parseInt(nestedArray[1].toString()));
+			transDetailsDTO.setTransModel(nestedArray[2].toString());
+			transDetailsDTO.setTransId(nestedArray[3].toString());
+			transDetailsDTO.setTransDocDt(nestedArray[6].toString());
+			transDetailsDTO.setTransDocNo(nestedArray[5].toString());
+			transDetailsDTO.setVehNo(nestedArray[7].toString());
+			transDetailsDTO.setVehType(nestedArray[8].toString());
+			ewayBillDTO.setTransDetailsDTO(transDetailsDTO);
+
+			ExpShipDetailsDTO expShipDetailsDTO = new ExpShipDetailsDTO();
+			expShipDetailsDTO.setAddr1(nestedArray[9].toString());
+			expShipDetailsDTO.setAddr2(nestedArray[10].toString());
+			expShipDetailsDTO.setLoc(nestedArray[11].toString());
+			expShipDetailsDTO.setPin(Integer.parseInt(nestedArray[12].toString()));
+			expShipDetailsDTO.setStcd(nestedArray[13].toString());
+			ewayBillDTO.setExpShipDetails(expShipDetailsDTO);
+			
+			DispatchDetailsDTO dispatchDetailsDTO=new DispatchDetailsDTO();
+			dispatchDetailsDTO.setNm(nestedArray[15].toString());
+			dispatchDetailsDTO.setAddr1(nestedArray[9].toString());
+			dispatchDetailsDTO.setAddr2(nestedArray[10].toString());
+			dispatchDetailsDTO.setLoc(nestedArray[11].toString());
+			dispatchDetailsDTO.setPin(Integer.parseInt(nestedArray[12].toString()));
+			dispatchDetailsDTO.setStcd(nestedArray[13].toString());
+			ewayBillDTO.setDispatchDetails(dispatchDetailsDTO);
+		
+		    ewayBillDTO.setIrn(nestedArray[1].toString());
+		
+		}
+		return ewayBillDTO;
 	}
 
 }
