@@ -12,17 +12,21 @@ import com.reitzel.invoiceApproval.entity.EInvoiceVO;
 
 @Service
 public interface EInvoiceService {
-	
-	
+
 	List<EInvoiceVO> getEInvoiceByDocId(String docId);
-	
+
 	EInvoiceDTO getEInvoicePayloadByDocId(String docId);
 
 	Map<String, Object> createEinvoice(List<String> docId) throws JsonProcessingException;
 
 	String generateIRN(List<String> docid);
 
+	// EWAYBILL
+
 	EwayBillDTO getEWayBillByDocId(String docId);
 
+	Map<String, Object> createEWayBill(List<String> docId) throws JsonProcessingException;
+
+	EwayBillDTO getEWayBillByDocId();
 
 }

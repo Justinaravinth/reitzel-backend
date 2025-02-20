@@ -92,10 +92,18 @@ public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 	Object[] getHeaders(String docId);
 
 	
-	@Query(nativeQuery =true,value ="select e.irn,e.distance,e.transmode,e.transid,e.transname,e.transdocno,e.transdocdate,e.vehicleno,e.vehicletype,\r\n"
-			+ "e.buyeradd1,e.add2,e.buyerlocation,e.buyerpincode,e.buyerstcd,e.buyerlegalname from einvoice e where docid='EXP/24-25/1016'\r\n"
-			+ "GROUP BY e.irn,e.distance,e.transmode,e.transid,e.transname,e.transdocno,e.transdocdate,e.vehicleno,e.vehicletype,\r\n"
-			+ "e.buyeradd1,e.add2,e.buyerlocation,e.buyerpincode,e.buyerstcd,e.buyerlegalname;")
-	Object[] getEWayBillDetails(String docId);
+	@Query(value = "SELECT e.irn, e.distance, e.transmode, e.transid, e.transname, " +
+            "e.transdocno, e.transdocdate, e.vehicleno, e.vehicletype, " +
+            "e.buyeradd1, e.add2, e.buyerlocation, e.buyerpincode, " +
+            "e.buyerstcd, e.buyerlegalname " +
+            "FROM einvoice e " +
+            "WHERE e.docid = ?1 " +
+            "GROUP BY e.irn, e.distance, e.transmode, e.transid, e.transname, " +
+            "e.transdocno, e.transdocdate, e.vehicleno, e.vehicletype, " +
+            "e.buyeradd1, e.add2, e.buyerlocation, e.buyerpincode, " +
+            "e.buyerstcd, e.buyerlegalname",
+    nativeQuery = true)
+Object[] getEWayBillDetails(String docId);
+
 
 }

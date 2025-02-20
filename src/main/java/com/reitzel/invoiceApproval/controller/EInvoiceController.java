@@ -101,11 +101,36 @@ public class EInvoiceController extends BaseController  {
 			responseObjectsMap.put("ewayBillDTO", ewayBillDTO);
 			
 		} else {
-			responseDTO = createServiceResponseError(responseObjectsMap, "EWayBill Details information receive failed",
+			responseDTO = createServiceResponseError(responseObjectsMap, "EwayBillDTO Details information receive failed",
 					errorMsg);
 		}
 		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
 		return ResponseEntity.ok().body(ewayBillDTO);
 	}
+	
+	@GetMapping("/getEWayBillByDocId")
+	public ResponseEntity<EwayBillDTO> getEWayBillByDocId() {
+		String methodName = "getEWayBillByDocId()";
+		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
+		String errorMsg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<>();
+		ResponseDTO responseDTO = null;
+		EwayBillDTO ewayBillDTO= new EwayBillDTO();
+		try {
+			ewayBillDTO = eInvoiceService.getEWayBillByDocId();
 
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
+		}
+		if (StringUtils.isEmpty(errorMsg)) {
+			responseObjectsMap.put("ewayBillDTO", ewayBillDTO);
+			
+		} else {
+			responseDTO = createServiceResponseError(responseObjectsMap, "EwayBillDTO Details information receive failed",
+					errorMsg);
+		}
+		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
+		return ResponseEntity.ok().body(ewayBillDTO);
+	}
 }

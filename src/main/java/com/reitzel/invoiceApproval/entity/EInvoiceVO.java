@@ -99,6 +99,12 @@ public class EInvoiceVO {
 	
 	private String irnstatus;
 	
+	private Long ewbno;
+	
+	private String ewbdt;
+	
+	private String ewbvalidtill;
+	
 	@Lob
 	@Column(columnDefinition = "CLOB")
 	private String signedqrcode;

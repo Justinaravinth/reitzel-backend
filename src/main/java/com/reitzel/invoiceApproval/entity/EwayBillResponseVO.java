@@ -16,15 +16,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name="invoiceresponse")
+@Table(name="ewaybillresponse")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class InvoiceResponseVO {
-	
+public class EwayBillResponseVO {
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "invoiceresponsegen")
-	@SequenceGenerator(name = "invoiceresponsegen", sequenceName = "invoiceresponseeq", initialValue = 1000000001, allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ewaybillresponsegen")
+	@SequenceGenerator(name = "ewaybillresponsegen", sequenceName = "ewaybillresponseseeq", initialValue = 1000000001, allocationSize = 1)
 	private Long id;
 	
 	private LocalDateTime createdOn= LocalDateTime.now();
@@ -35,5 +35,4 @@ public class InvoiceResponseVO {
 	private String response;
 	
 	
-
 }

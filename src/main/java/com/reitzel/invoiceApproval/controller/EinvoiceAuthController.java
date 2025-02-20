@@ -263,5 +263,26 @@ public class EinvoiceAuthController extends BaseController {
 //		// Provided encrypted secret key (Base64-encoded)
 //
 //	}
+	
+	
+	@PostMapping("/createEWayBill")
+	public ResponseEntity<ResponseDTO> createEWayBill(@RequestParam List<String> docId) {
+		String methodName = "createEWayBill()";
+		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
+		String errorMsg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<>();
+		ResponseDTO responseDTO = null;
+		try {
+			Map<String, Object> ewayResponseDTO = eInvoiceService.createEWayBill(docId);
+			responseObjectsMap.put(CommonConstant.STRING_MESSAGE, "EwayBill Generated Successfully");
+			responseObjectsMap.put("ewayResponseDTO", ewayResponseDTO);
+			responseDTO = createServiceResponse(ewayResponseDTO);
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
+		}
+		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
+		return ResponseEntity.ok().body(responseDTO);
+	}
 
 }
