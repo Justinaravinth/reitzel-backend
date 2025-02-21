@@ -92,18 +92,29 @@ public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 	Object[] getHeaders(String docId);
 
 	
-	@Query(value = "SELECT e.irn, e.distance, e.transmode, e.transid, e.transname, " +
-            "e.transdocno, e.transdocdate, e.vehicleno, e.vehicletype, " +
-            "e.buyeradd1, e.add2, e.buyerlocation, e.buyerpincode, " +
-            "e.buyerstcd, e.buyerlegalname " +
-            "FROM einvoice e " +
-            "WHERE e.docid = ?1 " +
-            "GROUP BY e.irn, e.distance, e.transmode, e.transid, e.transname, " +
-            "e.transdocno, e.transdocdate, e.vehicleno, e.vehicletype, " +
-            "e.buyeradd1, e.add2, e.buyerlocation, e.buyerpincode, " +
-            "e.buyerstcd, e.buyerlegalname",
-    nativeQuery = true)
-Object[] getEWayBillDetails(String docId);
+//	@Query(value = "SELECT e.irn, e.distance, e.transmode, e.transid, e.transname, " +
+//            "e.transdocno, e.transdocdate, e.vehicleno, e.vehicletype, " +
+//            "e.buyeradd1, e.add2, e.buyerlocation, e.buyerpincode, " +
+//            "e.buyerstcd, e.buyerlegalname " +
+//            "FROM einvoice e " +
+//            "WHERE e.docid = ?1 " +
+//            "GROUP BY e.irn, e.distance, e.transmode, e.transid, e.transname, " +
+//            "e.transdocno, e.transdocdate, e.vehicleno, e.vehicletype, " +
+//            "e.buyeradd1, e.add2, e.buyerlocation, e.buyerpincode, " +
+//            "e.buyerstcd, e.buyerlegalname",
+//    nativeQuery = true)
+//Object[] getEWayBillDetails(String docId);
+
+	@Query(nativeQuery =  true,value = "SELECT e.irn, e.distance, e.transmode, e.transid, e.transname, \r\n"
+			+ "       e.transdocno, e.transdocdate, e.vehicleno, e.vehicletype, \r\n"
+			+ "       e.buyeradd1,e.ADD2 buyeradd2,  e.buyerlocation, e.buyerpincode, \r\n"
+			+ "       e.buyerstcd, e.SELLERLEGALNAME,e.SELLERADD1,e.SELLERADD2,e.SELLERLOCATION,e.SELLERPINCODE,e.SELLERSTCD\r\n"
+			+ "FROM einvoice e where e.IRN is not null and docid=?1\r\n"
+			+ "GROUP BY e.irn, e.distance, e.transmode, e.transid, e.transname, \r\n"
+			+ "         e.transdocno, e.transdocdate, e.vehicleno, e.vehicletype, \r\n"
+			+ "         e.buyeradd1, e.add2, e.buyerlocation, e.buyerpincode, \r\n"
+			+ "         e.buyerstcd, e.SELLERLEGALNAME,e.SELLERADD1,e.SELLERADD2,e.SELLERLOCATION,e.SELLERPINCODE,e.SELLERSTCD")
+	Set<Object[]> getEwayBillDetails(String docId);
 
 
 }

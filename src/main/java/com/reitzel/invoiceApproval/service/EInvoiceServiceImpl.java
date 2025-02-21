@@ -33,8 +33,6 @@ import com.reitzel.invoiceApproval.dto.DocumentDetailsDTO;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
 import com.reitzel.invoiceApproval.dto.EWayBillDetailsDTO;
 import com.reitzel.invoiceApproval.dto.EwayBillDTO;
-import com.reitzel.invoiceApproval.dto.EwayBillResponseDTO;
-import com.reitzel.invoiceApproval.dto.EwayResponseDTO;
 import com.reitzel.invoiceApproval.dto.ExpShipDetailsDTO;
 import com.reitzel.invoiceApproval.dto.ExportDetailsDTO;
 import com.reitzel.invoiceApproval.dto.IRNResponseDTO;
@@ -46,8 +44,6 @@ import com.reitzel.invoiceApproval.dto.ShippingDetailsDTO;
 import com.reitzel.invoiceApproval.dto.TransactionDetailsDTO;
 import com.reitzel.invoiceApproval.dto.ValueDetailsDTO;
 import com.reitzel.invoiceApproval.entity.EInvoiceVO;
-import com.reitzel.invoiceApproval.entity.EwayBillResponseVO;
-import com.reitzel.invoiceApproval.entity.EwayResponseVO;
 import com.reitzel.invoiceApproval.entity.IRNResponseVO;
 import com.reitzel.invoiceApproval.entity.InvoiceResponseVO;
 import com.reitzel.invoiceApproval.repo.EInvoiceRepo;
@@ -71,10 +67,10 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 	@Autowired
 	IRNResponseRepo irnResponseRepo;
-	
+
 	@Autowired
 	EwayBillResponseRepo ewayBillResponseRepo;
-	
+
 	@Autowired
 	EwayResponseRepo ewayResponseRepo;
 
@@ -405,7 +401,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		return new String(decryptedBytes, StandardCharsets.UTF_8);
 	}
 
-	@Scheduled(fixedRate = 2000)
+//	@Scheduled(fixedRate = 2000)
 	public void processEInvoices() throws JsonProcessingException {
 		System.out.println("Running E-Invoice service every 1 minute...");
 		// Replace with actual branchCode
@@ -526,54 +522,54 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 //	    return 0;
 //	}
 
-	@Override
-	public EwayBillDTO getEWayBillByDocId(String docIds) {
-
-		String docId = docIds;
-		Object[] eWayBillDetailsList = eInvoiceRepo.getEWayBillDetails(docId);
-
-		// Initialize DTO
-		EwayBillDTO ewayBillDTO = new EwayBillDTO();
-
-		if (eWayBillDetailsList.length > 0 && eWayBillDetailsList[0] instanceof Object[]) {
-			Object[] nestedArray = (Object[]) eWayBillDetailsList[0];
-
-			// Assigning values from query result
-			ewayBillDTO.setIrn((nestedArray[0].toString()));
-			ewayBillDTO.setDistance(Integer.parseInt(nestedArray[1].toString()));
-			ewayBillDTO.setTransModel((nestedArray[2].toString()));
-			ewayBillDTO.setTransId((nestedArray[3].toString()));
-			ewayBillDTO.setTransName((nestedArray[4].toString()));
-			ewayBillDTO.setTransDocNo((nestedArray[5].toString()));
-
-			String docString = getStringValue(nestedArray, 6);
-			ewayBillDTO.setTransDocDt(formatDate1(docString));
-
-			ewayBillDTO.setVehNo((nestedArray[7].toString()));
-			ewayBillDTO.setVehType((nestedArray[8].toString()));
-
-			// Export Shipping Details
-			ExpShipDetailsDTO expShipDetailsDTO = new ExpShipDetailsDTO();
-			expShipDetailsDTO.setAddr1((nestedArray[9].toString()));
-			expShipDetailsDTO.setAddr2((nestedArray[10].toString()));
-			expShipDetailsDTO.setLoc((nestedArray[11].toString()));
-			expShipDetailsDTO.setPin(getIntValue(nestedArray, 12));
-			expShipDetailsDTO.setStcd((nestedArray[13].toString()));
-			ewayBillDTO.setExpShipDetails(expShipDetailsDTO);
-
-			// Dispatch Details
-			DispatchDetailsDTO dispatchDetailsDTO = new DispatchDetailsDTO();
-			dispatchDetailsDTO.setNm((nestedArray[14].toString())); // Fixed name mapping
-			dispatchDetailsDTO.setAddr1((nestedArray[9].toString()));
-			dispatchDetailsDTO.setAddr2((nestedArray[10].toString()));
-			dispatchDetailsDTO.setLoc((nestedArray[11].toString()));
-			dispatchDetailsDTO.setPin(Integer.parseInt(nestedArray[12].toString()));
-			dispatchDetailsDTO.setStcd((nestedArray[13].toString()));
-			ewayBillDTO.setDispatchDetails(dispatchDetailsDTO);
-		}
-
-		return ewayBillDTO;
-	}
+//	@Override
+//	public EwayBillDTO getEWayBillByDocId(String docIds) {
+//
+//		String docId = docIds;
+//		Object[] eWayBillDetailsList = eInvoiceRepo.getEWayBillDetails(docId);
+//
+//		// Initialize DTO
+//		EwayBillDTO ewayBillDTO = new EwayBillDTO();
+//
+//		if (eWayBillDetailsList.length > 0 && eWayBillDetailsList[0] instanceof Object[]) {
+//			Object[] nestedArray = (Object[]) eWayBillDetailsList[0];
+//
+//			// Assigning values from query result
+//			ewayBillDTO.setIrn((nestedArray[0].toString()));
+//			ewayBillDTO.setDistance(Integer.parseInt(nestedArray[1].toString()));
+//			ewayBillDTO.setTransModel((nestedArray[2].toString()));
+//			ewayBillDTO.setTransId((nestedArray[3].toString()));
+//			ewayBillDTO.setTransName((nestedArray[4].toString()));
+//			ewayBillDTO.setTransDocNo((nestedArray[5].toString()));
+//
+//			String docString = getStringValue(nestedArray, 6);
+//			ewayBillDTO.setTransDocDt(formatDate1(docString));
+//
+//			ewayBillDTO.setVehNo((nestedArray[7].toString()));
+//			ewayBillDTO.setVehType((nestedArray[8].toString()));
+//
+//			// Export Shipping Details
+//			ExpShipDetailsDTO expShipDetailsDTO = new ExpShipDetailsDTO();
+//			expShipDetailsDTO.setAddr1((nestedArray[9].toString()));
+//			expShipDetailsDTO.setAddr2((nestedArray[10].toString()));
+//			expShipDetailsDTO.setLoc((nestedArray[11].toString()));
+//			expShipDetailsDTO.setPin(getIntValue(nestedArray, 12));
+//			expShipDetailsDTO.setStcd((nestedArray[13].toString()));
+//			ewayBillDTO.setExpShipDetails(expShipDetailsDTO);
+//
+//			// Dispatch Details
+//			DispatchDetailsDTO dispatchDetailsDTO = new DispatchDetailsDTO();
+//			dispatchDetailsDTO.setNm((nestedArray[14].toString())); // Fixed name mapping
+//			dispatchDetailsDTO.setAddr1((nestedArray[9].toString()));
+//			dispatchDetailsDTO.setAddr2((nestedArray[10].toString()));
+//			dispatchDetailsDTO.setLoc((nestedArray[11].toString()));
+//			dispatchDetailsDTO.setPin(Integer.parseInt(nestedArray[12].toString()));
+//			dispatchDetailsDTO.setStcd((nestedArray[13].toString()));
+//			ewayBillDTO.setDispatchDetails(dispatchDetailsDTO);
+//		}
+//
+//		return ewayBillDTO;
+//	}
 
 	// Safely extract String values from Object[]
 	private String getStringValue(Object[] array, int index) {
@@ -609,138 +605,127 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		}
 	}
 
-	@Override
-	public Map<String, Object> createEWayBill(List<String> docIds) throws JsonProcessingException {
-		String message = null;
-		List<EwayResponseDTO> ewayResponseDTO = new ArrayList<>();
-		for (String docId : docIds) {
-
-			List<EInvoiceVO> eInvoiceVOs = eInvoiceRepo.getDocidDetails(docId);
-			List<EInvoiceVO> updatedEInvoiceVOs = new ArrayList<>();
-
-			String userName = "";
-			String gstin = "";
-			String clientId = "";
-			String clientSecret = "";
-			String authToken = "";
-			String sek = "";
-
-			Set<Object[]> headerDetails = headerDetailsRepo.getHeaderDetails(docId);
-			if (!headerDetails.isEmpty()) {
-				Object[] firstRow = headerDetails.iterator().next(); // Get the first row
-
-				userName = firstRow[0].toString();
-				gstin = firstRow[1].toString();
-				clientId = firstRow[2].toString();
-				clientSecret = firstRow[3].toString();
-				authToken = firstRow[4].toString();
-				sek = firstRow[5].toString();
-			}
-
-			EwayResponseVO ewayResponseVO = new EwayResponseVO();
-
-			EwayBillResponseDTO ewayBillResponseDTO = new EwayBillResponseDTO();
-			PayloadDTO payloadDTO = new PayloadDTO();
-
-			Object eInvoicePayload = getEWayBillByDocId(docId);
-
-			// Convert object to JSON string
-			ObjectMapper objectMapper = new ObjectMapper();
-			String name = objectMapper.writeValueAsString(eInvoicePayload);
-			String encryptedName = encryptBySymmetricKey(name, sek);
-
-			payloadDTO.setData(encryptedName);
-
-			String url = "https://einv1api.gstsandbox.nic.in/eicore/v1.03/Invoice";
-			HttpHeaders headers = new HttpHeaders();
-			headers.set("client_id", clientId);
-			headers.set("client_secret", clientSecret);
-			headers.set("gstin", gstin);
-			headers.set("user_name", userName);
-			headers.set("authtoken", authToken);
-			headers.setContentType(MediaType.APPLICATION_JSON);
-
-			HttpEntity<PayloadDTO> request = new HttpEntity<>(payloadDTO, headers);
-			RestTemplate restTemplate = new RestTemplate();
-			try {
-				ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
-
-				System.out.println("Raw Response: " + response.getBody());
-				EwayBillResponseVO ewayBillResponseVO = new EwayBillResponseVO();
-				ewayBillResponseVO.setDocid(docId);
-				ewayBillResponseVO.setResponse(response.getBody());
-				for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
-					eInvoiceVO.setApicall("T");
-					updatedEInvoiceVOs.add(eInvoiceVO);
-				}
-				eInvoiceRepo.saveAll(updatedEInvoiceVOs);
-				ewayBillResponseRepo.save(ewayBillResponseVO);
-				// Convert JSON response to a Map
-				ObjectMapper objectMapper1 = new ObjectMapper();
-				Map<String, Object> mp = objectMapper1.readValue(response.getBody(),
-						new TypeReference<Map<String, Object>>() {
-						});
-
-				// Map to InvoiceResponse object
-				ewayBillResponseDTO
-						.setStatus(mp.get("Status") != null ? Integer.parseInt(mp.get("Status").toString()) : 0);
-				ewayBillResponseDTO
-						.setErrorDetails(mp.get("ErrorDetails") != null ? mp.get("ErrorDetails").toString() : null);
-
-				// Convert Data field if present
-				if (mp.get("Data") != null) {
-					String datas = mp.get("Data").toString();
-					byte[] dt = datas.getBytes(StandardCharsets.UTF_8);
-					ewayBillResponseDTO.setData(dt);
-					if (ewayBillResponseDTO.getData() != null) {
-						String decryptedText = decryptBySymmetricKey(datas, sek);
-						ObjectMapper objectMapper3 = new ObjectMapper();
-						Map<String, Object> decryptedMap = objectMapper3.readValue(decryptedText, Map.class);
-
-						EwayResponseDTO ewayResponseDTO1 = new EwayResponseDTO();
-						
-						ewayResponseDTO1.setEwbNo(Long.parseLong(decryptedMap.get("EwbNo").toString()));
-						ewayResponseDTO1.setEwbDt(decryptedMap.get("EwbDt").toString());
-						ewayResponseDTO1.setEwValidTill(decryptedMap.get("EwValidTill").toString());
-						ewayResponseDTO1.setStatus(decryptedMap.get("Status").toString());
-						
-						ewayResponseDTO.add(ewayResponseDTO1);
-						
-						ewayResponseVO.setEwbNo(Long.parseLong(decryptedMap.get("EwbNo").toString()));
-						ewayResponseVO.setEwbDt(decryptedMap.get("EwbDt").toString());
-						ewayResponseVO.setStatus(decryptedMap.get("Status").toString());
-						ewayResponseVO.setEwValidTill(decryptedMap.get("EwValidTill").toString());
-						ewayResponseVO.setDocid(docId);
-						ewayResponseRepo.save(ewayResponseVO);
-
-						for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
-							eInvoiceVO.setEwbno(ewayResponseVO.getEwbNo());
-							eInvoiceVO.setEwbdt(ewayResponseVO.getEwbDt());
-							eInvoiceVO.setEwbvalidtill(ewayResponseVO.getEwValidTill());
-							eInvoiceVO.setIrnstatus("T");
-
-							updatedEInvoiceVOs.add(eInvoiceVO); // ✅ Add to a separate list
-						}
-
-						eInvoiceRepo.saveAll(updatedEInvoiceVOs);
-					}
-				} else {
-					for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
-						eInvoiceVO.setIrnstatus("F");
-						updatedEInvoiceVOs.add(eInvoiceVO);
-					}
-					eInvoiceRepo.saveAll(updatedEInvoiceVOs);
-				}
-				message = "EwayBill Genaretd Successfully";
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null; // Handle errors properly based on your business logic
-			}
-		}
-		Map<String, Object> response = new HashMap<>();
-		response.put("message", message);
-		return response;
-	}
+//	@Override
+//	public Map<String, Object> createEWayBill(List<String> docIds) throws JsonProcessingException {
+//		String message = null;
+//		List<EwayResponseDTO> ewayResponseDTO = new ArrayList<>();
+//		for (String docId : docIds) {
+//
+//			List<EInvoiceVO> eInvoiceVOs = eInvoiceRepo.getDocidDetails(docId);
+//			List<EInvoiceVO> updatedEInvoiceVOs = new ArrayList<>();
+//
+//			String userName = "";
+//			String gstin = "";
+//			String clientId = "";
+//			String clientSecret = "";
+//			String authToken = "";
+//			String sek = "";
+//
+//			Set<Object[]> headerDetails = headerDetailsRepo.getHeaderDetails(docId);
+//			if (!headerDetails.isEmpty()) {
+//				Object[] firstRow = headerDetails.iterator().next(); // Get the first row
+//
+//				userName = firstRow[0].toString();
+//				gstin = firstRow[1].toString();
+//				clientId = firstRow[2].toString();
+//				clientSecret = firstRow[3].toString();
+//				authToken = firstRow[4].toString();
+//				sek = firstRow[5].toString();
+//			}
+//
+//			EwayResponseVO ewayResponseVO = new EwayResponseVO();
+//
+//			EwayBillResponseDTO ewayBillResponseDTO = new EwayBillResponseDTO();
+//			PayloadDTO payloadDTO = new PayloadDTO();
+//
+//			Object eInvoicePayload = getEWayBillByDocId(docId);
+//
+//			// Convert object to JSON string
+//			ObjectMapper objectMapper = new ObjectMapper();
+//			String name = objectMapper.writeValueAsString(eInvoicePayload);
+//			String encryptedName = encryptBySymmetricKey(name, sek);
+//
+//			payloadDTO.setData(encryptedName);
+//
+//			String url = "https://einv1api.gstsandbox.nic.in/eicore/v1.03/Invoice";
+//			HttpHeaders headers = new HttpHeaders();
+//			headers.set("client_id", clientId);
+//			headers.set("client_secret", clientSecret);
+//			headers.set("gstin", gstin);
+//			headers.set("user_name", userName);
+//			headers.set("authtoken", authToken);
+//			headers.setContentType(MediaType.APPLICATION_JSON);
+//
+//			HttpEntity<PayloadDTO> request = new HttpEntity<>(payloadDTO, headers);
+//			RestTemplate restTemplate = new RestTemplate();
+//			try {
+//				ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+//
+//				System.out.println("Raw Response: " + response.getBody());
+//				EwayBillResponseVO ewayBillResponseVO = new EwayBillResponseVO();
+//				ewayBillResponseVO.setDocid(docId);
+//				ewayBillResponseVO.setResponse(response.getBody());
+//				for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
+//					eInvoiceVO.setApicall("T");
+//					updatedEInvoiceVOs.add(eInvoiceVO);
+//				}
+//				eInvoiceRepo.saveAll(updatedEInvoiceVOs);
+//				ewayBillResponseRepo.save(ewayBillResponseVO);
+//				// Convert JSON response to a Map
+//				ObjectMapper objectMapper1 = new ObjectMapper();
+//				Map<String, Object> mp = objectMapper1.readValue(response.getBody(),
+//						new TypeReference<Map<String, Object>>() {
+//						});
+//
+//				// Map to InvoiceResponse object
+//				ewayBillResponseDTO
+//						.setStatus(mp.get("Status") != null ? Integer.parseInt(mp.get("Status").toString()) : 0);
+//				ewayBillResponseDTO
+//						.setErrorDetails(mp.get("ErrorDetails") != null ? mp.get("ErrorDetails").toString() : null);
+//
+//				// Convert Data field if present
+//				if (mp.get("Data") != null) {
+//					String datas = mp.get("Data").toString();
+//					byte[] dt = datas.getBytes(StandardCharsets.UTF_8);
+//					ewayBillResponseDTO.setData(dt);
+//					if (ewayBillResponseDTO.getData() != null) {
+//						String decryptedText = decryptBySymmetricKey(datas, sek);
+//						ObjectMapper objectMapper3 = new ObjectMapper();
+//						Map<String, Object> decryptedMap = objectMapper3.readValue(decryptedText, Map.class);
+//
+//						EwayResponseDTO ewayResponseDTO1 = new EwayResponseDTO();
+//						
+//						ewayResponseDTO1.setEwbNo(Long.parseLong(decryptedMap.get("EwbNo").toString()));
+//						ewayResponseDTO1.setEwbDt(decryptedMap.get("EwbDt").toString());
+//						ewayResponseDTO1.setEwValidTill(decryptedMap.get("EwValidTill").toString());
+//						ewayResponseDTO1.setStatus(decryptedMap.get("Status").toString());
+//						
+//						ewayResponseDTO.add(ewayResponseDTO1);
+//						
+//						ewayResponseVO.setEwbNo(Long.parseLong(decryptedMap.get("EwbNo").toString()));
+//						ewayResponseVO.setEwbDt(decryptedMap.get("EwbDt").toString());
+//						ewayResponseVO.setStatus(decryptedMap.get("Status").toString());
+//						ewayResponseVO.setEwValidTill(decryptedMap.get("EwValidTill").toString());
+//						ewayResponseVO.setDocid(docId);
+//						ewayResponseRepo.save(ewayResponseVO);
+//					}
+//				} else {
+//					for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
+//						eInvoiceVO.setIrnstatus("F");
+//						updatedEInvoiceVOs.add(eInvoiceVO);
+//					}
+//					eInvoiceRepo.saveAll(updatedEInvoiceVOs);
+//				}
+//				message = "EwayBill Genaretd Successfully";
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				return null; // Handle errors properly based on your business logic
+//			}
+//		}
+//		Map<String, Object> response = new HashMap<>();
+//		response.put("message", message);
+//		return response;
+//	}
 
 	// Encrypt method using symmetric encryption (AES)
 	public String encryptBySymmetricKey1(String textToEncrypt, String decryptedSek) {
@@ -781,7 +766,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		return new String(decryptedBytes, StandardCharsets.UTF_8);
 	}
 
-	@Scheduled(fixedRate = 2000)
+//	@Scheduled(fixedRate = 2000)
 	public void processEInvoices1() throws JsonProcessingException {
 		System.out.println("Running E-Invoice service every 1 minute...");
 		// Replace with actual branchCode
@@ -812,43 +797,98 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		}
 
 	}
-	
+
+//	@Override
+//	public EwayBillDTO getEWayBillByDocId() {
+//
+//		// Initialize DTO with test values
+//		EwayBillDTO ewayBillDTO = new EwayBillDTO();
+//		ewayBillDTO.setIrn("TEST_IRN_12345");
+//		ewayBillDTO.setDistance(100);
+//		ewayBillDTO.setTransModel("Road");
+//		ewayBillDTO.setTransId("TRANS_001");
+//		ewayBillDTO.setTransName("Test Transport");
+//		ewayBillDTO.setTransDocNo("DOC_2025");
+//		ewayBillDTO.setTransDocDt("2025-02-18"); // Test date value
+//		ewayBillDTO.setVehNo("KA01AB1234");
+//		ewayBillDTO.setVehType("Truck");
+//
+//		// Export Shipping Details - Test Values
+//		ExpShipDetailsDTO expShipDetailsDTO = new ExpShipDetailsDTO();
+//		expShipDetailsDTO.setAddr1("123 Test Street");
+//		expShipDetailsDTO.setAddr2("Near Sample Landmark");
+//		expShipDetailsDTO.setLoc("Test City");
+//		expShipDetailsDTO.setPin(560001);
+//		expShipDetailsDTO.setStcd("KA");
+//		ewayBillDTO.setExpShipDetails(expShipDetailsDTO);
+//
+//		// Dispatch Details - Test Values
+//		DispatchDetailsDTO dispatchDetailsDTO = new DispatchDetailsDTO();
+//		dispatchDetailsDTO.setNm("Test Dispatch Name");
+//		dispatchDetailsDTO.setAddr1("456 Dispatch Street");
+//		dispatchDetailsDTO.setAddr2("Opp. Dispatch Market");
+//		dispatchDetailsDTO.setLoc("Dispatch City");
+//		dispatchDetailsDTO.setPin(560002);
+//		dispatchDetailsDTO.setStcd("KA");
+//		ewayBillDTO.setDispatchDetails(dispatchDetailsDTO);
+//
+//		return ewayBillDTO;
+//	}
+
 	@Override
-	public EwayBillDTO getEWayBillByDocId() {
+	public EwayBillDTO getEWayBillByDocIdnew(String docIds) {
+	    EwayBillDTO ewayBillDTOs = new EwayBillDTO();
+	    String docId = docIds;
+	    Set<Object[]> headerDetails = eInvoiceRepo.getEwayBillDetails(docId);
 
-	    // Initialize DTO with test values
-	    EwayBillDTO ewayBillDTO = new EwayBillDTO();
-	    ewayBillDTO.setIrn("TEST_IRN_12345");
-	    ewayBillDTO.setDistance(100);
-	    ewayBillDTO.setTransModel("Road");
-	    ewayBillDTO.setTransId("TRANS_001");
-	    ewayBillDTO.setTransName("Test Transport");
-	    ewayBillDTO.setTransDocNo("DOC_2025");
-	    ewayBillDTO.setTransDocDt("2025-02-18"); // Test date value
-	    ewayBillDTO.setVehNo("KA01AB1234");
-	    ewayBillDTO.setVehType("Truck");
+	    if (headerDetails != null && !headerDetails.isEmpty()) {
+	        for (Object[] header : headerDetails) {
+	        	EwayBillDTO ewayBillDTO =new EwayBillDTO();
+	            // Set EwayBillDTO fields with null checks
+	            ewayBillDTO.setIrn(header[0] != null ? header[0].toString() : null);
+	            ewayBillDTO.setDistance(header[1] != null ? Integer.parseInt(header[1].toString()) : 0); // Default to 0 if null
+	            ewayBillDTO.setTransMode(header[2] != null ? header[2].toString() : null);
+	            ewayBillDTO.setTransId(header[3] != null ? header[3].toString() : null);
+	            ewayBillDTO.setTransName(header[4] != null ? header[4].toString() : null);
+	            ewayBillDTO.setTransDocNo(header[5] != null ? header[5].toString() : null);
+	            String dateString = header[6].toString();
+				String formattedDate = formatDate(dateString);
+	            ewayBillDTO.setTransDocDt(formattedDate);
+	            ewayBillDTO.setVehNo(header[7] != null ? header[7].toString() : null);
+	            ewayBillDTO.setVehType(header[8] != null ? header[8].toString() : null);
 
-	    // Export Shipping Details - Test Values
-	    ExpShipDetailsDTO expShipDetailsDTO = new ExpShipDetailsDTO();
-	    expShipDetailsDTO.setAddr1("123 Test Street");
-	    expShipDetailsDTO.setAddr2("Near Sample Landmark");
-	    expShipDetailsDTO.setLoc("Test City");
-	    expShipDetailsDTO.setPin(560001);
-	    expShipDetailsDTO.setStcd("KA");
-	    ewayBillDTO.setExpShipDetails(expShipDetailsDTO);
+	            // ExpShipDetailsDTO (Buyer Details)
+	            ExpShipDetailsDTO expShipDetailsDTO = new ExpShipDetailsDTO();
+	            expShipDetailsDTO.setAddr1(header[9] != null ? header[9].toString() : null);
+	            expShipDetailsDTO.setAddr2(header[10] != null ? header[10].toString() : null);
+	            expShipDetailsDTO.setLoc(header[11] != null ? header[11].toString() : null);
+	            expShipDetailsDTO.setPin(header[12] != null ? Integer.parseInt(header[12].toString()) : 0); // Default to 0 if null
+	            expShipDetailsDTO.setStcd(header[13] != null ? header[13].toString() : null);
+	            ewayBillDTO.setExpShipDetails(expShipDetailsDTO);
 
-	    // Dispatch Details - Test Values
-	    DispatchDetailsDTO dispatchDetailsDTO = new DispatchDetailsDTO();
-	    dispatchDetailsDTO.setNm("Test Dispatch Name");
-	    dispatchDetailsDTO.setAddr1("456 Dispatch Street");
-	    dispatchDetailsDTO.setAddr2("Opp. Dispatch Market");
-	    dispatchDetailsDTO.setLoc("Dispatch City");
-	    dispatchDetailsDTO.setPin(560002);
-	    dispatchDetailsDTO.setStcd("KA");
-	    ewayBillDTO.setDispatchDetails(dispatchDetailsDTO);
+	            // DispatchDetailsDTO (Seller Details)
+	            DispatchDetailsDTO dispatchDetailsDTO = new DispatchDetailsDTO();
+	            dispatchDetailsDTO.setNm(header[14] != null ? header[14].toString() : null);
+	            dispatchDetailsDTO.setAddr1(header[15] != null ? header[15].toString() : null);
+	            dispatchDetailsDTO.setAddr2(header[16] != null ? header[16].toString() : null);
+	            dispatchDetailsDTO.setLoc(header[17] != null ? header[17].toString() : null);
+	            dispatchDetailsDTO.setPin(header[18] != null ? Integer.parseInt(header[18].toString()) : 0); // Default to 0 if null
+	            dispatchDetailsDTO.setStcd(header[19] != null ? header[19].toString() : null);
+	            ewayBillDTO.setDispatchDetails(dispatchDetailsDTO);
+	            ewayBillDTOs=ewayBillDTO;
+	        }
+	    } 
+	    
+	    
 
-	    return ewayBillDTO;
+	    // Return the populated EwayBillDTO object
+	    return ewayBillDTOs;
 	}
 
+	@Override
+	public Map<String, Object> createEWayBill(List<String> docId) throws JsonProcessingException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

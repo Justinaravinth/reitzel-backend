@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EwayBillDTO {
 	
-	@JsonProperty("irn")
+	@JsonProperty("Irn")
 	private String irn;
 	
 	@JsonProperty("Distance")
 	private long distance;
 
-	@JsonProperty("TransModel")
-	private String transModel;
+	@JsonProperty("TransMode")
+	private String transMode;
 
 	@JsonProperty("TransId")
 	private String transId;
@@ -28,7 +28,7 @@ public class EwayBillDTO {
 	private String transName;
 
 	@JsonProperty("TransDocDt")
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+	 @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private String transDocDt;
 	
 	@JsonProperty("TransDocNo")
@@ -37,14 +37,14 @@ public class EwayBillDTO {
 	@JsonProperty("VehNo")
 	private String vehNo;
 	
-	@JsonProperty("vehType")
+	@JsonProperty("VehType")
 	private String VehType;
 	
 	
-	@JsonProperty("ExpShipDetails")
+	@JsonProperty("ExpShipDtls")
 	private ExpShipDetailsDTO expShipDetails;
 	
-	@JsonProperty("DispatchDetails")
+	@JsonProperty("DispDtls")
 	private DispatchDetailsDTO dispatchDetails;
 
 }

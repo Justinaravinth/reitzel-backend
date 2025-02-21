@@ -82,55 +82,54 @@ public class EInvoiceController extends BaseController  {
 		return ResponseEntity.ok().body(eInvoiceDTO);
 	}
 
-	@GetMapping("/getEWayBillByDocId")
-	public ResponseEntity<EwayBillDTO> getEWayBillByDocId(@RequestParam String docId) {
-		String methodName = "getEWayBillByDocId()";
+	@GetMapping("/ewaybill")
+	public ResponseEntity<EwayBillDTO> getAllCao(@RequestParam String docid) {
+		String methodName = "getAllCao()";
 		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
 		String errorMsg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<>();
 		ResponseDTO responseDTO = null;
-		EwayBillDTO ewayBillDTO= new EwayBillDTO();
+		EwayBillDTO ewayBillDTO = new EwayBillDTO();
 		try {
-			ewayBillDTO = eInvoiceService.getEWayBillByDocId(docId);
-
+			ewayBillDTO = eInvoiceService.getEWayBillByDocIdnew(docid);
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
 			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
 		}
-		if (StringUtils.isEmpty(errorMsg)) {
+		if (StringUtils.isBlank(errorMsg)) {
+			responseObjectsMap.put(CommonConstant.STRING_MESSAGE, "EWayBill Information Get Successfully");
 			responseObjectsMap.put("ewayBillDTO", ewayBillDTO);
-			
+			responseDTO = createServiceResponse(responseObjectsMap);
 		} else {
-			responseDTO = createServiceResponseError(responseObjectsMap, "EwayBillDTO Details information receive failed",
-					errorMsg);
+			responseDTO = createServiceResponseError(responseObjectsMap, "EWayBill Information Get Filed", errorMsg);
 		}
 		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
 		return ResponseEntity.ok().body(ewayBillDTO);
 	}
 	
-	@GetMapping("/getEWayBillByDocId")
-	public ResponseEntity<EwayBillDTO> getEWayBillByDocId() {
-		String methodName = "getEWayBillByDocId()";
-		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
-		String errorMsg = null;
-		Map<String, Object> responseObjectsMap = new HashMap<>();
-		ResponseDTO responseDTO = null;
-		EwayBillDTO ewayBillDTO= new EwayBillDTO();
-		try {
-			ewayBillDTO = eInvoiceService.getEWayBillByDocId();
-
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
-		}
-		if (StringUtils.isEmpty(errorMsg)) {
-			responseObjectsMap.put("ewayBillDTO", ewayBillDTO);
-			
-		} else {
-			responseDTO = createServiceResponseError(responseObjectsMap, "EwayBillDTO Details information receive failed",
-					errorMsg);
-		}
-		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
-		return ResponseEntity.ok().body(ewayBillDTO);
-	}
+//	@GetMapping("/getEWayBillByDocId")
+//	public ResponseEntity<EwayBillDTO> getEWayBillByDocId() {
+//		String methodName = "getEWayBillByDocId()";
+//		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
+//		String errorMsg = null;
+//		Map<String, Object> responseObjectsMap = new HashMap<>();
+//		ResponseDTO responseDTO = null;
+//		EwayBillDTO ewayBillDTO= new EwayBillDTO();
+//		try {
+//			ewayBillDTO = eInvoiceService.getEWayBillByDocId();
+//
+//		} catch (Exception e) {
+//			errorMsg = e.getMessage();
+//			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
+//		}
+//		if (StringUtils.isEmpty(errorMsg)) {
+//			responseObjectsMap.put("ewayBillDTO", ewayBillDTO);
+//			
+//		} else {
+//			responseDTO = createServiceResponseError(responseObjectsMap, "EwayBillDTO Details information receive failed",
+//					errorMsg);
+//		}
+//		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
+//		return ResponseEntity.ok().body(ewayBillDTO);
+//	}
 }
