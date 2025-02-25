@@ -1,6 +1,12 @@
 package com.reitzel.invoiceApproval.service;
 
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.spec.X509EncodedKeySpec;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -15,6 +21,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -24,18 +31,21 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reitzel.invoiceApproval.dto.BchDtlsDTO;
 import com.reitzel.invoiceApproval.dto.BuyerDetailsDTO;
 import com.reitzel.invoiceApproval.dto.DispatchDetailsDTO;
 import com.reitzel.invoiceApproval.dto.DocumentDetailsDTO;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
+import com.reitzel.invoiceApproval.dto.EInvoiceGetToketDTO;
 import com.reitzel.invoiceApproval.dto.EWayBillDetailsDTO;
 import com.reitzel.invoiceApproval.dto.EwayBillDTO;
 import com.reitzel.invoiceApproval.dto.EwayBillResponseDTO;
 import com.reitzel.invoiceApproval.dto.EwayResponseDTO;
 import com.reitzel.invoiceApproval.dto.ExpShipDetailsDTO;
 import com.reitzel.invoiceApproval.dto.ExportDetailsDTO;
+import com.reitzel.invoiceApproval.dto.GenerateTokenDTO;
 import com.reitzel.invoiceApproval.dto.IRNResponseDTO;
 import com.reitzel.invoiceApproval.dto.InvoiceResponseDTO;
 import com.reitzel.invoiceApproval.dto.ItemDTO;
@@ -48,6 +58,7 @@ import com.reitzel.invoiceApproval.entity.EInvoiceVO;
 import com.reitzel.invoiceApproval.entity.EwayBillResponseVO;
 import com.reitzel.invoiceApproval.entity.EwayBillVO;
 import com.reitzel.invoiceApproval.entity.EwayResponseVO;
+import com.reitzel.invoiceApproval.entity.HeaderDetailsVO;
 import com.reitzel.invoiceApproval.entity.IRNResponseVO;
 import com.reitzel.invoiceApproval.entity.InvoiceResponseVO;
 import com.reitzel.invoiceApproval.repo.EInvoiceRepo;
@@ -85,6 +96,8 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 	@Autowired
 	EwayHeadersRepo ewayHeadersRepo;
+
+	static byte[] appKey1 = null;
 
 	@Override
 	public List<EInvoiceVO> getEInvoiceByDocId(String docId) {
@@ -579,7 +592,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 						String decryptedText1 = decryptBySymmetricKey1(datas, sek);
 						ObjectMapper objectMapper3 = new ObjectMapper();
 						Map<String, Object> decryptedMap1 = objectMapper3.readValue(decryptedText1, Map.class);
-						System.out.println("My Decrypting data :"+ decryptedMap1);
+						System.out.println("My Decrypting data :" + decryptedMap1);
 						EwayResponseDTO ewayResponseDTO1 = new EwayResponseDTO();
 
 						ewayResponseDTO1.setEwbNo(Long.parseLong(decryptedMap1.get("EwbNo").toString()));
@@ -716,4 +729,143 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		return ewayBillDTOs;
 	}
 
+	@Value("${public.key.path}")
+	private String publicKeyPath;
+
+	private PublicKey publicKey;
+
+	@Override
+	public Map<String, Object> generateToken(EInvoiceGetToketDTO eInvoiceGetToketDTO) throws Exception {
+
+		Map<String, Object> token = new HashMap<>();
+
+
+        // Convert the byte array to a Base64 string
+        String appKey2 = "LAz2aeV0irbbTrjtl3uKAAXeVJig91kjbracM3DWfO8=";
+        System.out.println("AppKey: "+appKey2);
+
+        // Convert hex string to byte array
+//        byte[] apk = hexStringToByteArray(hexString);
+		publicKey = loadPublicKey(publicKeyPath);
+		HeaderDetailsVO headerDetailsVO = headerDetailsRepo.findByUserName(eInvoiceGetToketDTO.getUserName());
+
+		String appKey=appKey2;
+		String gstin = headerDetailsVO.getGstin();
+		String clientId = headerDetailsVO.getClientId();
+		String clientSecret = headerDetailsVO.getClientSecret();
+		GenerateTokenDTO generateTokenDTO= new GenerateTokenDTO();
+		generateTokenDTO.setUserName(eInvoiceGetToketDTO.getUserName());
+		generateTokenDTO.setPassword(eInvoiceGetToketDTO.getPassword());
+		generateTokenDTO.setAppKey(appKey);
+		generateTokenDTO.setForceRefreshAccessToken(true);
+		ObjectMapper objectMapper = new ObjectMapper();
+		String payload = objectMapper.writeValueAsString(generateTokenDTO);
+
+		// Encode the payload into Base64
+		String base64Payload = Base64.getEncoder().encodeToString(payload.getBytes(StandardCharsets.UTF_8));
+
+		// Encrypt the Base64 encoded payload using RSA (for sending the payload)
+		String encryptedPayload = encryptWithRSA(base64Payload.getBytes(StandardCharsets.UTF_8), publicKey);
+		
+		PayloadDTO payloadDTO = new PayloadDTO();
+		payloadDTO.setData(encryptedPayload);
+
+		String url = "https://einv1api.gstsandbox.nic.in/eivital/v1.04/auth";
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("client_id", clientId);
+		headers.set("client_secret", clientSecret);
+		headers.set("gstin", gstin);
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<PayloadDTO> request = new HttpEntity<>(payloadDTO, headers);
+		RestTemplate restTemplate = new RestTemplate();
+		try {
+			ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+
+			System.out.println("Raw Response: " + response.getBody());
+			
+			JsonNode jsonNode = objectMapper.readTree(response.getBody());
+		    String encryptedSek = jsonNode.get("Data").get("Sek").asText();
+		    
+			ObjectMapper objectMapper1 = new ObjectMapper();
+			Map<String, Object> mp = objectMapper1.readValue(response.getBody(),
+					new TypeReference<Map<String, Object>>() {
+					});
+			if (mp.get("Data") != null) {
+
+				Map<String, Object> dataMap = (Map<String, Object>) mp.get("Data");
+
+				String ClientId = (String) dataMap.get("ClientId");
+				String UserName = (String) dataMap.get("UserName");
+				String AuthToken = (String) dataMap.get("AuthToken");
+				String Sek1 = (String) dataMap.get("Sek");
+				System.out.println("Encrypted Sek: " + Sek1);
+				
+				String TokenExpiry = (String) dataMap.get("TokenExpiry");
+				
+				byte[] decodedBytes = Base64.getDecoder().decode(appKey);
+	            SecretKeySpec secretKey = new SecretKeySpec(decodedBytes, "AES");
+//	            System.out.println("AES Key: " + bytesToHex(secretKey.getEncoded()));
+	            byte[] decryptedSekBytes = decryptWithAppKey(encryptedSek, appKey);
+
+	            // Convert the decrypted SEK byte array to a human-readable hex format
+	            String base64DecryptedSek = bytesToBase64(decryptedSekBytes);
+	            System.out.println("Decrypted SEK (Base64): " + base64DecryptedSek);
+	            headerDetailsVO.setSek(base64DecryptedSek);
+	            headerDetailsVO.setAuthtoken(AuthToken);
+	            headerDetailsRepo.save(headerDetailsVO);
+				token.put("ClientId", ClientId);
+				token.put("UserName", UserName);
+				token.put("AuthToken", AuthToken);
+				token.put("Sek", base64DecryptedSek);
+				token.put("TokenExpiry", TokenExpiry);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// Return the encrypted data and encrypted AES key
+		Map<String, Object> response = new HashMap<>();
+		response.put("TokenDetails", token);
+		System.out.println("Decrypted Response: " + response);
+		return response;
+	}
+
+    public static byte[] decryptWithAppKey(String encryptedSek, String appKey) throws Exception {
+    	// Decode the AppKey (Base64) and the encrypted SEK (Base64)
+        byte[] appKeyBytes = Base64.getDecoder().decode(appKey);
+        byte[] encryptedSekBytes = Base64.getDecoder().decode(encryptedSek);
+
+        // Initialize the AES cipher for decryption with the AppKey
+        SecretKeySpec secretKey = new SecretKeySpec(appKeyBytes, "AES");
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding"); // AES ECB mode with padding
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+        // Decrypt the SEK and return the raw byte array
+        return cipher.doFinal(encryptedSekBytes);
+    }
+
+ // Utility to convert byte array to Base64
+    public static String bytesToBase64(byte[] bytes) {
+        return Base64.getEncoder().encodeToString(bytes);
+    }
+
+
+	// RSA Encryption for the AES key and data
+	private static String encryptWithRSA(byte[] data, PublicKey publicKey) throws Exception {
+	    Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+	    cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+	    byte[] encryptedBytes = cipher.doFinal(data);
+	    return Base64.getEncoder().encodeToString(encryptedBytes);
+	}
+
+	// Load RSA Public Key from File
+	private static PublicKey loadPublicKey(String filePath) throws Exception {
+		String key = new String(Files.readAllBytes(Paths.get(filePath)));
+		key = key.replace("-----BEGIN PUBLIC KEY-----", "").replace("-----END PUBLIC KEY-----", "").replaceAll("\\s",
+				""); // Remove new lines and spaces
+		byte[] decodedKey = Base64.getDecoder().decode(key);
+		X509EncodedKeySpec spec = new X509EncodedKeySpec(decodedKey);
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		return keyFactory.generatePublic(spec);
+	}
 }

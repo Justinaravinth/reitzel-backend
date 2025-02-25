@@ -13,4 +13,6 @@ public interface HeaderDetailsRepo extends JpaRepository<HeaderDetailsVO, Long>{
 			+ "group by a.user_name,a.gstin,A.CLIENT_ID,A.CLIENT_SECRET,A.AUTHTOKEN,A.SEK")
 	Set<Object[]> getHeaderDetails(String docId);
 
+	HeaderDetailsVO findByUserName(String userName);
+
 }

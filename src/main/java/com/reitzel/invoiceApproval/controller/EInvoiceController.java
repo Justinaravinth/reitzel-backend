@@ -11,12 +11,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.reitzel.invoiceApproval.common.CommonConstant;
 import com.reitzel.invoiceApproval.common.UserConstants;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
+import com.reitzel.invoiceApproval.dto.EInvoiceGetToketDTO;
 import com.reitzel.invoiceApproval.dto.EwayBillDTO;
 import com.reitzel.invoiceApproval.dto.ResponseDTO;
 import com.reitzel.invoiceApproval.entity.EInvoiceVO;
@@ -132,4 +135,29 @@ public class EInvoiceController extends BaseController  {
 //		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
 //		return ResponseEntity.ok().body(ewayBillDTO);
 //	}
+	
+	@PostMapping("/getToken")
+	public ResponseEntity<ResponseDTO> generateToken(@RequestBody EInvoiceGetToketDTO eInvoiceGetToketDTO ) {
+		String methodName = "generateToken()";
+		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
+		String errorMsg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<>();
+		ResponseDTO responseDTO = null;
+		Map<String,Object> ewayBillDTO = new HashMap<>();
+		try {
+			ewayBillDTO = eInvoiceService.generateToken(eInvoiceGetToketDTO);
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
+		}
+		if (StringUtils.isBlank(errorMsg)) {
+			responseObjectsMap.put(CommonConstant.STRING_MESSAGE, "EWayBill Information Get Successfully");
+			responseObjectsMap.put("ewayBillDTO", ewayBillDTO);
+			responseDTO = createServiceResponse(responseObjectsMap);
+		} else {
+			responseDTO = createServiceResponseError(responseObjectsMap, "EWayBill Information Get Filed", errorMsg);
+		}
+		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
+		return ResponseEntity.ok().body(responseDTO);
+	}
 }
