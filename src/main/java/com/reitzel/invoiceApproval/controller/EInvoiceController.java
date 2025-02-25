@@ -82,9 +82,9 @@ public class EInvoiceController extends BaseController  {
 		return ResponseEntity.ok().body(eInvoiceDTO);
 	}
 
-	@GetMapping("/ewaybill")
-	public ResponseEntity<EwayBillDTO> getAllCao(@RequestParam String docid) {
-		String methodName = "getAllCao()";
+	@GetMapping("/getEwayBillByDocId")
+	public ResponseEntity<EwayBillDTO> getEwayBillByDocId(@RequestParam String docid) {
+		String methodName = "getEwayBillByDocId()";
 		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
 		String errorMsg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<>();

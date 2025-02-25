@@ -34,6 +34,8 @@ public class EwayResponseVO {
 	private String status;
 
 	private String docid;
+	
+	private String irn;
 
 	private LocalDateTime createdOn = LocalDateTime.now();
 }

@@ -30,6 +30,8 @@ public class EwayBillResponseVO {
 	private LocalDateTime createdOn= LocalDateTime.now();
 	private String docid;
 	
+	private String irn;
+	
 	@Lob
 	@Column(columnDefinition = "CLOB")
 	private String response;
