@@ -766,7 +766,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 		// Encrypt the Base64 encoded payload using RSA (for sending the payload)
 		String encryptedPayload = encryptWithRSA(base64Payload.getBytes(StandardCharsets.UTF_8), publicKey);
-		
+		System.out.println("Encrypted Payload "+encryptedPayload);
 		PayloadDTO payloadDTO = new PayloadDTO();
 		payloadDTO.setData(encryptedPayload);
 
@@ -813,6 +813,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 	            System.out.println("Decrypted SEK (Base64): " + base64DecryptedSek);
 	            headerDetailsVO.setSek(base64DecryptedSek);
 	            headerDetailsVO.setAuthtoken(AuthToken);
+	            headerDetailsVO.setTokenExpiry(TokenExpiry);	
 	            headerDetailsRepo.save(headerDetailsVO);
 				token.put("ClientId", ClientId);
 				token.put("UserName", UserName);

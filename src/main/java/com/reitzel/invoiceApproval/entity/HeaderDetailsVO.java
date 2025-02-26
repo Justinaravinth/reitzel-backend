@@ -29,6 +29,7 @@ public class HeaderDetailsVO {
 	private String userName;
 	private String authtoken;
 	private String Sek;
+	private String tokenExpiry;
 	
 
 }
