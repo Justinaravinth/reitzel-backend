@@ -103,5 +103,12 @@ public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 			+ "         e.buyerstcd, e.SELLERLEGALNAME,e.SELLERADD1,e.SELLERADD2,e.SELLERLOCATION,e.SELLERPINCODE,e.SELLERSTCD")
 	Set<Object[]> getEwayBillDetails(String docId);
 
+	@Query(nativeQuery =true,value ="SELECT a.user_name, a.gstin, a.CLIENT_ID, a.CLIENT_SECRET, a.AUTHTOKEN, a.SEK \r\n"
+			+ "FROM einvoiceheader a, einvoice b \r\n"
+			+ "WHERE a.GSTIN = b.SELLERGSTIN AND b.irn =?1 \r\n"
+			+ "GROUP BY a.user_name, a.gstin, a.CLIENT_ID, a.CLIENT_SECRET, a.AUTHTOKEN, a.SEK")
+	Set<Object[]> getEwayHeaderDetails(String irn);
+
+
 
 }

@@ -517,7 +517,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			String authToken = "";
 			String sek = "";
 
-			Set<Object[]> headerDetails = ewayHeadersRepo.getEwayHeaderDetails(irn);
+			Set<Object[]> headerDetails = eInvoiceRepo.getEwayHeaderDetails(irn);
 			if (!headerDetails.isEmpty()) {
 				Object[] firstRow = headerDetails.iterator().next(); // Get the first row
 
