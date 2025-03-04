@@ -595,16 +595,20 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 						ewayResponseVO1.setEwbNo(decryptedMap.get("EwbNo") != null ? decryptedMap.get("EwbNo").toString() : "");
 						ewayResponseVO1.setEwValidTill(decryptedMap.get("EwbValidTill") != null ? decryptedMap.get("EwbValidTill").toString() : "");
 						ewayResponseVO1.setIrn(irn);
-						ewayResponseRepo.save(ewayResponseVO1);
+						
+						
 						
 						for(EInvoiceVO eInvoiceVO1:eInvoiceVOs)
 						{
 							eInvoiceVO1.setEwbNo(decryptedMap.get("EwbNo") != null ? decryptedMap.get("EwbNo").toString() : "");
 							eInvoiceVO1.setEwbDt(decryptedMap.get("EwbDt") != null ? decryptedMap.get("EwbDt").toString() : "");
 							eInvoiceVO1.setEwValidTill(decryptedMap.get("EwbValidTill") != null ? decryptedMap.get("EwbValidTill").toString() : "");
+							ewayResponseVO1.setDocid(eInvoiceVO1.getDocid());
 							updatedEInvoiceVOs.add(eInvoiceVO1);;
 						}
 						eInvoiceRepo.saveAll(updatedEInvoiceVOs);
+						
+						ewayResponseRepo.save(ewayResponseVO1);
 
 					}
 				}
