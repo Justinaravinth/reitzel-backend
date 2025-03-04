@@ -101,8 +101,12 @@ public class EInvoiceVO {
 	
 	private String ewaystatus;
 	
+	private Long EwbNo;
 
-	private String ewvalidtill;
+	private String EwbDt;
+
+	private String EwValidTill;
+	
 	
 	
 	@Lob

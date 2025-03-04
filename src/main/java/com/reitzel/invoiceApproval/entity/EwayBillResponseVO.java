@@ -28,7 +28,7 @@ public class EwayBillResponseVO {
 	private Long id;
 	
 	private LocalDateTime createdOn= LocalDateTime.now();
-	private String docid;
+	//private String docid;
 	
 	private String irn;
 	

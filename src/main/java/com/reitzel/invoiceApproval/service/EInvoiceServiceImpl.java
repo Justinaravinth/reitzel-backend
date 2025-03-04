@@ -507,8 +507,8 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		List<EwayResponseDTO> ewayResponseDTO = new ArrayList<>();
 		for (String irn : irnNo) {
 
-			List<EwayBillVO> ewayBillVOs = new ArrayList<EwayBillVO>();
-			List<EwayBillVO> updatedEInvoiceVOs = new ArrayList<>();
+			List<EInvoiceVO> eInvoiceVOs =eInvoiceRepo.getIrnDetails(irn);
+			List<EInvoiceVO> updatedEInvoiceVOs = new ArrayList<>();
 
 			String userName = "";
 			String gstin = "";
@@ -565,11 +565,11 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 				EwayBillResponseVO ewayBillResponseVO = new EwayBillResponseVO();
 				ewayBillResponseVO.setIrn(irn);
 				ewayBillResponseVO.setResponse(response.getBody());
-				for (EwayBillVO ewayBillVO : ewayBillVOs) {
-					ewayBillVO.setEwapicall("T");
-					updatedEInvoiceVOs.add(ewayBillVO);
+				for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
+					eInvoiceVO.setApicall("T");
+					updatedEInvoiceVOs.add(eInvoiceVO);
 				}
-				ewayBillRepo.saveAll(updatedEInvoiceVOs);
+				eInvoiceRepo.saveAll(updatedEInvoiceVOs);
 				ewayBillResponseRepo.save(ewayBillResponseVO);
 				// Convert JSON response to a Map
 				ObjectMapper objectMapper1 = new ObjectMapper();
@@ -609,24 +609,24 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 						ewayResponseVO.setIrn(irn);
 						ewayResponseRepo.save(ewayResponseVO);
 
-						for (EwayBillVO eInvoiceVO : ewayBillVOs) {
-							eInvoiceVO.setEwbno(ewayResponseVO.getEwbNo());
-							eInvoiceVO.setEwbdt(ewayResponseVO.getEwbDt());
-							eInvoiceVO.setEwvalidtill(ewayResponseVO.getEwValidTill());
+						for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
+							eInvoiceVO.setEwbNo(ewayResponseVO.getEwbNo());
+							eInvoiceVO.setEwbDt(ewayResponseVO.getEwbDt());
+							eInvoiceVO.setEwValidTill(ewayResponseVO.getEwValidTill());
 							eInvoiceVO.setIrn(irn);
-							eInvoiceVO.setEwapicall("T");
+							eInvoiceVO.setApicall("T");
 							updatedEInvoiceVOs.add(eInvoiceVO); // ✅ Add to a separate list
 						}
 
-						ewayBillRepo.saveAll(updatedEInvoiceVOs);
+						eInvoiceRepo.saveAll(updatedEInvoiceVOs);
 
 					}
 				} else {
-					for (EwayBillVO eInvoiceVO : ewayBillVOs) {
-						eInvoiceVO.setStatus("F");
+					for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
+						eInvoiceVO.setEwaystatus("F");
 						updatedEInvoiceVOs.add(eInvoiceVO);
 					}
-					ewayBillRepo.saveAll(updatedEInvoiceVOs);
+					eInvoiceRepo.saveAll(updatedEInvoiceVOs);
 				}
 				message = "EwayBill Genaretd Successfully";
 			} catch (Exception e) {
