@@ -24,7 +24,7 @@ public interface EInvoiceService {
 
 	String generateIRN(List<String> docid);
 
-	EwayResponseDTO createEWayBill(List<String> irn) throws JsonProcessingException;
+	Map<String, Object> createEWayBill(List<String> irn) throws JsonProcessingException;
 
 	EwayBillDTO getEWayBillByDocIdnew(String docIds);
 	

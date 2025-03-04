@@ -501,7 +501,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 	}
 
 	@Override
-	public EwayResponseDTO createEWayBill(List<String> irnNo) throws JsonProcessingException {
+	public Map<String,Object> createEWayBill(List<String> irnNo) throws JsonProcessingException {
 		String message = null;
 		EwayResponseDTO ewayResponseDTO = new EwayResponseDTO();
 		for (String irn : irnNo) {
@@ -616,7 +616,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		}
 		Map<String, Object> response = new HashMap<>();
 		response.put("message", message);
-		return ewayResponseDTO;
+		return response;
 	}
 
 	public String encryptBySymmetricKey1(String textToEncrypt, String decryptedSek) {
