@@ -25,7 +25,7 @@ public class EwayResponseVO {
 	@SequenceGenerator(name = "ewayresponsegen", sequenceName = "ewayresponseseq", initialValue = 1000000001, allocationSize = 1)
 	private Long id;
 
-	private Long EwbNo;
+	private String EwbNo;
 
 	private String EwbDt;
 

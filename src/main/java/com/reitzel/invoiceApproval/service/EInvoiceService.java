@@ -9,11 +9,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
 import com.reitzel.invoiceApproval.dto.EInvoiceGetToketDTO;
 import com.reitzel.invoiceApproval.dto.EwayBillDTO;
+import com.reitzel.invoiceApproval.dto.EwayResponseDTO;
 import com.reitzel.invoiceApproval.entity.EInvoiceVO;
 
 @Service
 public interface EInvoiceService {
 
+	
 	List<EInvoiceVO> getEInvoiceByDocId(String docId);
 
 	EInvoiceDTO getEInvoicePayloadByDocId(String docId);
@@ -22,7 +24,7 @@ public interface EInvoiceService {
 
 	String generateIRN(List<String> docid);
 
-	Map<String, Object> createEWayBill(List<String> irn) throws JsonProcessingException;
+	EwayResponseDTO createEWayBill(List<String> irn) throws JsonProcessingException;
 
 	EwayBillDTO getEWayBillByDocIdnew(String docIds);
 	

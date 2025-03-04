@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.spec.X509EncodedKeySpec;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,6 +25,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -56,7 +56,6 @@ import com.reitzel.invoiceApproval.dto.TransactionDetailsDTO;
 import com.reitzel.invoiceApproval.dto.ValueDetailsDTO;
 import com.reitzel.invoiceApproval.entity.EInvoiceVO;
 import com.reitzel.invoiceApproval.entity.EwayBillResponseVO;
-import com.reitzel.invoiceApproval.entity.EwayBillVO;
 import com.reitzel.invoiceApproval.entity.EwayResponseVO;
 import com.reitzel.invoiceApproval.entity.HeaderDetailsVO;
 import com.reitzel.invoiceApproval.entity.IRNResponseVO;
@@ -426,7 +425,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		return new String(decryptedBytes, StandardCharsets.UTF_8);
 	}
 
-//	@Scheduled(fixedRate = 2000)
+	@Scheduled(fixedRate = 2000)
 	public void processEInvoices() throws JsonProcessingException {
 		System.out.println("Running E-Invoice service every 1 minute...");
 		// Replace with actual branchCode
@@ -502,12 +501,12 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 	}
 
 	@Override
-	public Map<String, Object> createEWayBill(List<String> irnNo) throws JsonProcessingException {
+	public EwayResponseDTO createEWayBill(List<String> irnNo) throws JsonProcessingException {
 		String message = null;
-		List<EwayResponseDTO> ewayResponseDTO = new ArrayList<>();
+		EwayResponseDTO ewayResponseDTO = new EwayResponseDTO();
 		for (String irn : irnNo) {
 
-			List<EInvoiceVO> eInvoiceVOs =eInvoiceRepo.getIrnDetails(irn);
+			List<EInvoiceVO> eInvoiceVOs = eInvoiceRepo.getIrnDetails(irn);
 			List<EInvoiceVO> updatedEInvoiceVOs = new ArrayList<>();
 
 			String userName = "";
@@ -580,8 +579,6 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 				// Map to InvoiceResponse object
 				ewayBillResponseDTO
 						.setStatus(mp.get("Status") != null ? Integer.parseInt(mp.get("Status").toString()) : 0);
-				ewayBillResponseDTO
-						.setErrorDetails(mp.get("ErrorDetails") != null ? mp.get("ErrorDetails").toString() : null);
 
 				// Convert Data field if present
 				if (mp.get("Data") != null) {
@@ -589,44 +586,27 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 					byte[] dt = datas.getBytes(StandardCharsets.UTF_8);
 					ewayBillResponseDTO.setData(dt);
 					if (ewayBillResponseDTO.getData() != null) {
-						String decryptedText1 = decryptBySymmetricKey1(datas, sek);
+						String decryptedText = decryptBySymmetricKey(datas, sek);
 						ObjectMapper objectMapper3 = new ObjectMapper();
-						Map<String, Object> decryptedMap1 = objectMapper3.readValue(decryptedText1, Map.class);
-						System.out.println("My Decrypting data :" + decryptedMap1);
-						EwayResponseDTO ewayResponseDTO1 = new EwayResponseDTO();
-
-						ewayResponseDTO1.setEwbNo(Long.parseLong(decryptedMap1.get("EwbNo").toString()));
-						ewayResponseDTO1.setEwbDt(decryptedMap1.get("EwbDt").toString());
-						ewayResponseDTO1.setEwValidTill(decryptedMap1.get("EwValidTill").toString());
-						ewayResponseDTO1.setStatus(decryptedMap1.get("Status").toString());
-
-						ewayResponseDTO.add(ewayResponseDTO1);
-
-						ewayResponseVO.setEwbNo(Long.parseLong(decryptedMap1.get("EwbNo").toString()));
-						ewayResponseVO.setEwbDt(decryptedMap1.get("EwbDt").toString());
-						ewayResponseVO.setStatus(decryptedMap1.get("Status").toString());
-						ewayResponseVO.setEwValidTill(decryptedMap1.get("EwValidTill").toString());
-						ewayResponseVO.setIrn(irn);
-						ewayResponseRepo.save(ewayResponseVO);
-
-						for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
-							eInvoiceVO.setEwbNo(ewayResponseVO.getEwbNo());
-							eInvoiceVO.setEwbDt(ewayResponseVO.getEwbDt());
-							eInvoiceVO.setEwValidTill(ewayResponseVO.getEwValidTill());
-							eInvoiceVO.setIrn(irn);
-							eInvoiceVO.setApicall("T");
-							updatedEInvoiceVOs.add(eInvoiceVO); // ✅ Add to a separate list
+						Map<String, Object> decryptedMap = objectMapper3.readValue(decryptedText, Map.class);
+						System.out.println("Decrypted Data "+decryptedMap);
+						EwayResponseVO ewayResponseVO1= new EwayResponseVO();
+						ewayResponseVO1.setEwbDt(decryptedMap.get("EwbDt") != null ? decryptedMap.get("EwbDt").toString() : "");
+						ewayResponseVO1.setEwbNo(decryptedMap.get("EwbNo") != null ? decryptedMap.get("EwbNo").toString() : "");
+						ewayResponseVO1.setEwValidTill(decryptedMap.get("EwbValidTill") != null ? decryptedMap.get("EwbValidTill").toString() : "");
+						ewayResponseVO1.setIrn(irn);
+						ewayResponseRepo.save(ewayResponseVO1);
+						
+						for(EInvoiceVO eInvoiceVO1:eInvoiceVOs)
+						{
+							eInvoiceVO1.setEwbNo(decryptedMap.get("EwbNo") != null ? decryptedMap.get("EwbNo").toString() : "");
+							eInvoiceVO1.setEwbDt(decryptedMap.get("EwbDt") != null ? decryptedMap.get("EwbDt").toString() : "");
+							eInvoiceVO1.setEwValidTill(decryptedMap.get("EwbValidTill") != null ? decryptedMap.get("EwbValidTill").toString() : "");
+							updatedEInvoiceVOs.add(eInvoiceVO1);;
 						}
-
 						eInvoiceRepo.saveAll(updatedEInvoiceVOs);
 
 					}
-				} else {
-					for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
-						eInvoiceVO.setEwaystatus("F");
-						updatedEInvoiceVOs.add(eInvoiceVO);
-					}
-					eInvoiceRepo.saveAll(updatedEInvoiceVOs);
 				}
 				message = "EwayBill Genaretd Successfully";
 			} catch (Exception e) {
@@ -636,7 +616,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		}
 		Map<String, Object> response = new HashMap<>();
 		response.put("message", message);
-		return response;
+		return ewayResponseDTO;
 	}
 
 	public String encryptBySymmetricKey1(String textToEncrypt, String decryptedSek) {
@@ -739,21 +719,20 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 		Map<String, Object> token = new HashMap<>();
 
+		// Convert the byte array to a Base64 string
+		String appKey2 = "LAz2aeV0irbbTrjtl3uKAAXeVJig91kjbracM3DWfO8=";
+		System.out.println("AppKey: " + appKey2);
 
-        // Convert the byte array to a Base64 string
-        String appKey2 = "LAz2aeV0irbbTrjtl3uKAAXeVJig91kjbracM3DWfO8=";
-        System.out.println("AppKey: "+appKey2);
-
-        // Convert hex string to byte array
+		// Convert hex string to byte array
 //        byte[] apk = hexStringToByteArray(hexString);
 		publicKey = loadPublicKey(publicKeyPath);
 		HeaderDetailsVO headerDetailsVO = headerDetailsRepo.findByUserName(eInvoiceGetToketDTO.getUserName());
 
-		String appKey=appKey2;
+		String appKey = appKey2;
 		String gstin = headerDetailsVO.getGstin();
 		String clientId = headerDetailsVO.getClientId();
 		String clientSecret = headerDetailsVO.getClientSecret();
-		GenerateTokenDTO generateTokenDTO= new GenerateTokenDTO();
+		GenerateTokenDTO generateTokenDTO = new GenerateTokenDTO();
 		generateTokenDTO.setUserName(eInvoiceGetToketDTO.getUserName());
 		generateTokenDTO.setPassword(eInvoiceGetToketDTO.getPassword());
 		generateTokenDTO.setAppKey(appKey);
@@ -766,7 +745,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 		// Encrypt the Base64 encoded payload using RSA (for sending the payload)
 		String encryptedPayload = encryptWithRSA(base64Payload.getBytes(StandardCharsets.UTF_8), publicKey);
-		System.out.println("Encrypted Payload "+encryptedPayload);
+		System.out.println("Encrypted Payload " + encryptedPayload);
 		PayloadDTO payloadDTO = new PayloadDTO();
 		payloadDTO.setData(encryptedPayload);
 
@@ -783,10 +762,10 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 
 			System.out.println("Raw Response: " + response.getBody());
-			
+
 			JsonNode jsonNode = objectMapper.readTree(response.getBody());
-		    String encryptedSek = jsonNode.get("Data").get("Sek").asText();
-		    
+			String encryptedSek = jsonNode.get("Data").get("Sek").asText();
+
 			ObjectMapper objectMapper1 = new ObjectMapper();
 			Map<String, Object> mp = objectMapper1.readValue(response.getBody(),
 					new TypeReference<Map<String, Object>>() {
@@ -800,21 +779,21 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 				String AuthToken = (String) dataMap.get("AuthToken");
 				String Sek1 = (String) dataMap.get("Sek");
 				System.out.println("Encrypted Sek: " + Sek1);
-				
-				String TokenExpiry = (String) dataMap.get("TokenExpiry");
-				
-				byte[] decodedBytes = Base64.getDecoder().decode(appKey);
-	            SecretKeySpec secretKey = new SecretKeySpec(decodedBytes, "AES");
-//	            System.out.println("AES Key: " + bytesToHex(secretKey.getEncoded()));
-	            byte[] decryptedSekBytes = decryptWithAppKey(encryptedSek, appKey);
 
-	            // Convert the decrypted SEK byte array to a human-readable hex format
-	            String base64DecryptedSek = bytesToBase64(decryptedSekBytes);
-	            System.out.println("Decrypted SEK (Base64): " + base64DecryptedSek);
-	            headerDetailsVO.setSek(base64DecryptedSek);
-	            headerDetailsVO.setAuthtoken(AuthToken);
-	            headerDetailsVO.setTokenExpiry(TokenExpiry);	
-	            headerDetailsRepo.save(headerDetailsVO);
+				String TokenExpiry = (String) dataMap.get("TokenExpiry");
+
+				byte[] decodedBytes = Base64.getDecoder().decode(appKey);
+				SecretKeySpec secretKey = new SecretKeySpec(decodedBytes, "AES");
+//	            System.out.println("AES Key: " + bytesToHex(secretKey.getEncoded()));
+				byte[] decryptedSekBytes = decryptWithAppKey(encryptedSek, appKey);
+
+				// Convert the decrypted SEK byte array to a human-readable hex format
+				String base64DecryptedSek = bytesToBase64(decryptedSekBytes);
+				System.out.println("Decrypted SEK (Base64): " + base64DecryptedSek);
+				headerDetailsVO.setSek(base64DecryptedSek);
+				headerDetailsVO.setAuthtoken(AuthToken);
+				headerDetailsVO.setTokenExpiry(TokenExpiry);
+				headerDetailsRepo.save(headerDetailsVO);
 				token.put("ClientId", ClientId);
 				token.put("UserName", UserName);
 				token.put("AuthToken", AuthToken);
@@ -831,32 +810,31 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		return response;
 	}
 
-    public static byte[] decryptWithAppKey(String encryptedSek, String appKey) throws Exception {
-    	// Decode the AppKey (Base64) and the encrypted SEK (Base64)
-        byte[] appKeyBytes = Base64.getDecoder().decode(appKey);
-        byte[] encryptedSekBytes = Base64.getDecoder().decode(encryptedSek);
+	public static byte[] decryptWithAppKey(String encryptedSek, String appKey) throws Exception {
+		// Decode the AppKey (Base64) and the encrypted SEK (Base64)
+		byte[] appKeyBytes = Base64.getDecoder().decode(appKey);
+		byte[] encryptedSekBytes = Base64.getDecoder().decode(encryptedSek);
 
-        // Initialize the AES cipher for decryption with the AppKey
-        SecretKeySpec secretKey = new SecretKeySpec(appKeyBytes, "AES");
-        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding"); // AES ECB mode with padding
-        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+		// Initialize the AES cipher for decryption with the AppKey
+		SecretKeySpec secretKey = new SecretKeySpec(appKeyBytes, "AES");
+		Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding"); // AES ECB mode with padding
+		cipher.init(Cipher.DECRYPT_MODE, secretKey);
 
-        // Decrypt the SEK and return the raw byte array
-        return cipher.doFinal(encryptedSekBytes);
-    }
+		// Decrypt the SEK and return the raw byte array
+		return cipher.doFinal(encryptedSekBytes);
+	}
 
- // Utility to convert byte array to Base64
-    public static String bytesToBase64(byte[] bytes) {
-        return Base64.getEncoder().encodeToString(bytes);
-    }
-
+	// Utility to convert byte array to Base64
+	public static String bytesToBase64(byte[] bytes) {
+		return Base64.getEncoder().encodeToString(bytes);
+	}
 
 	// RSA Encryption for the AES key and data
 	private static String encryptWithRSA(byte[] data, PublicKey publicKey) throws Exception {
-	    Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-	    cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-	    byte[] encryptedBytes = cipher.doFinal(data);
-	    return Base64.getEncoder().encodeToString(encryptedBytes);
+		Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+		byte[] encryptedBytes = cipher.doFinal(data);
+		return Base64.getEncoder().encodeToString(encryptedBytes);
 	}
 
 	// Load RSA Public Key from File

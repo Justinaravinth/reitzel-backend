@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.reitzel.invoiceApproval.common.CommonConstant;
 import com.reitzel.invoiceApproval.common.UserConstants;
+import com.reitzel.invoiceApproval.dto.EwayResponseDTO;
 import com.reitzel.invoiceApproval.dto.ResponseDTO;
 import com.reitzel.invoiceApproval.service.EInvoiceService;
 
@@ -273,10 +274,9 @@ public class EinvoiceAuthController extends BaseController {
 		Map<String, Object> responseObjectsMap = new HashMap<>();
 		ResponseDTO responseDTO = null;
 		try {
-			Map<String, Object> ewayResponseDTO = eInvoiceService.createEWayBill(irn);
+			EwayResponseDTO ewayResponseDTO = eInvoiceService.createEWayBill(irn);
 			responseObjectsMap.put(CommonConstant.STRING_MESSAGE, "EwayBill Generated Successfully");
 			responseObjectsMap.put("ewayResponseDTO", ewayResponseDTO);
-			responseDTO = createServiceResponse(ewayResponseDTO);
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
 			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);

@@ -101,7 +101,7 @@ public class EInvoiceVO {
 	
 	private String ewaystatus;
 	
-	private Long EwbNo;
+	private String EwbNo;
 
 	private String EwbDt;
 
