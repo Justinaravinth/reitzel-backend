@@ -591,18 +591,18 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 						Map<String, Object> decryptedMap = objectMapper3.readValue(decryptedText, Map.class);
 						System.out.println("Decrypted Data "+decryptedMap);
 						EwayResponseVO ewayResponseVO1= new EwayResponseVO();
-						ewayResponseVO1.setEwbDt(decryptedMap.get("EwbDt") != null ? decryptedMap.get("EwbDt").toString() : "");
-						ewayResponseVO1.setEwbNo(decryptedMap.get("EwbNo") != null ? decryptedMap.get("EwbNo").toString() : "");
-						ewayResponseVO1.setEwValidTill(decryptedMap.get("EwbValidTill") != null ? decryptedMap.get("EwbValidTill").toString() : "");
+						ewayResponseVO1.setEwbdate(decryptedMap.get("EwbDt") != null ? decryptedMap.get("EwbDt").toString() : "");
+						ewayResponseVO1.setEwbno(decryptedMap.get("EwbNo") != null ? decryptedMap.get("EwbNo").toString() : "");
+						ewayResponseVO1.setEwvalidtill(decryptedMap.get("EwbValidTill") != null ? decryptedMap.get("EwbValidTill").toString() : "");
 						ewayResponseVO1.setIrn(irn);
 						
 						
 						
 						for(EInvoiceVO eInvoiceVO1:eInvoiceVOs)
 						{
-							eInvoiceVO1.setEwbNo(decryptedMap.get("EwbNo") != null ? decryptedMap.get("EwbNo").toString() : "");
-							eInvoiceVO1.setEwbDt(decryptedMap.get("EwbDt") != null ? decryptedMap.get("EwbDt").toString() : "");
-							eInvoiceVO1.setEwValidTill(decryptedMap.get("EwbValidTill") != null ? decryptedMap.get("EwbValidTill").toString() : "");
+							eInvoiceVO1.setEwbno(decryptedMap.get("EwbNo") != null ? decryptedMap.get("EwbNo").toString() : "");
+							eInvoiceVO1.setEwbdate(decryptedMap.get("EwbDt") != null ? decryptedMap.get("EwbDt").toString() : "");
+							eInvoiceVO1.setEwbvalidtill(decryptedMap.get("EwbValidTill") != null ? decryptedMap.get("EwbValidTill").toString() : "");
 							ewayResponseVO1.setDocid(eInvoiceVO1.getDocid());
 							updatedEInvoiceVOs.add(eInvoiceVO1);;
 						}

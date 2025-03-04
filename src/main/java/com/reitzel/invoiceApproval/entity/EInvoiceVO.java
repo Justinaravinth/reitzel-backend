@@ -101,11 +101,11 @@ public class EInvoiceVO {
 	
 	private String ewaystatus;
 	
-	private String EwbNo;
+	private String ewbno;
 
-	private String EwbDt;
+	private String ewbdate;
 
-	private String EwValidTill;
+	private String ewbvalidtill;
 	
 	
 	

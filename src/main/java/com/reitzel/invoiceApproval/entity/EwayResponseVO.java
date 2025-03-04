@@ -25,11 +25,11 @@ public class EwayResponseVO {
 	@SequenceGenerator(name = "ewayresponsegen", sequenceName = "ewayresponseseq", initialValue = 1000000001, allocationSize = 1)
 	private Long id;
 
-	private String EwbNo;
+	private String Ewbno;
 
-	private String EwbDt;
+	private String Ewbdate;
 
-	private String EwValidTill;
+	private String Ewvalidtill;
 
 	private String status;
 
@@ -37,5 +37,5 @@ public class EwayResponseVO {
 	
 	private String irn;
 
-	private LocalDateTime createdOn = LocalDateTime.now();
+	private LocalDateTime createdOn= LocalDateTime.now();
 }
