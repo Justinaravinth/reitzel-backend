@@ -1,5 +1,6 @@
 package com.reitzel.invoiceApproval.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,17 +19,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class HeaderDetailsVO {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "einvoiceheadergen")
-	@SequenceGenerator(name = "einvoiceheadergen", sequenceName = "einvoiceheaderseq", initialValue = 1000000001, allocationSize = 1)
+	@Id	
+	@Column(name="einvoiceheaderid")
 	private Long id;
-	
 	private String clientId;
 	private String clientSecret;
 	private String gstin;
 	private String userName;
 	private String authtoken;
-	private String Sek;
+	private String sek;
 	private String tokenExpiry;
 	
 

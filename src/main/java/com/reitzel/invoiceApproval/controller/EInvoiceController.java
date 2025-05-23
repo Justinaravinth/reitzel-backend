@@ -151,11 +151,11 @@ public class EInvoiceController extends BaseController  {
 			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
 		}
 		if (StringUtils.isBlank(errorMsg)) {
-			responseObjectsMap.put(CommonConstant.STRING_MESSAGE, "EWayBill Information Get Successfully");
+			responseObjectsMap.put(CommonConstant.STRING_MESSAGE, "Token Information Get Successfully");
 			responseObjectsMap.put("ewayBillDTO", ewayBillDTO);
 			responseDTO = createServiceResponse(responseObjectsMap);
 		} else {
-			responseDTO = createServiceResponseError(responseObjectsMap, "EWayBill Information Get Filed", errorMsg);
+			responseDTO = createServiceResponseError(responseObjectsMap, "Token Information Get Filed", errorMsg);
 		}
 		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
 		return ResponseEntity.ok().body(responseDTO);

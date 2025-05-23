@@ -287,7 +287,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 			payloadDTO.setData(encryptedName);
 
-			String url = "https://einv1api.gstsandbox.nic.in/eicore/v1.03/Invoice";
+			String url = "https://api.einvoice1.gst.gov.in/eicore/v1.03/Invoice";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("client_id", clientId);
 			headers.set("client_secret", clientSecret);
@@ -753,7 +753,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		PayloadDTO payloadDTO = new PayloadDTO();
 		payloadDTO.setData(encryptedPayload);
 
-		String url = "https://einv1api.gstsandbox.nic.in/eivital/v1.04/auth";
+		String url = "https://api.einvoice1.gst.gov.in/eivital/v1.04/auth";
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("client_id", clientId);
 		headers.set("client_secret", clientSecret);
