@@ -2,10 +2,7 @@ package com.reitzel.invoiceApproval.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -29,6 +26,8 @@ public class HeaderDetailsVO {
 	private String authtoken;
 	private String sek;
 	private String tokenExpiry;
+	private String pwd;
+	private String gentokenflag;
 	
 
 }

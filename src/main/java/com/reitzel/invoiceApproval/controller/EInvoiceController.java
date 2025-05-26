@@ -137,7 +137,7 @@ public class EInvoiceController extends BaseController  {
 //	}
 	
 	@PostMapping("/getToken")
-	public ResponseEntity<ResponseDTO> generateToken(@RequestBody EInvoiceGetToketDTO eInvoiceGetToketDTO ) {
+	public ResponseEntity<ResponseDTO> generateToken(@RequestBody List<EInvoiceGetToketDTO> eInvoiceGetToketDTO1 ) {
 		String methodName = "generateToken()";
 		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
 		String errorMsg = null;
@@ -145,7 +145,7 @@ public class EInvoiceController extends BaseController  {
 		ResponseDTO responseDTO = null;
 		Map<String,Object> ewayBillDTO = new HashMap<>();
 		try {
-			ewayBillDTO = eInvoiceService.generateToken(eInvoiceGetToketDTO);
+			ewayBillDTO = eInvoiceService.generateToken(eInvoiceGetToketDTO1);
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
 			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);

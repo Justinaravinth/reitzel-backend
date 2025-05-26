@@ -28,7 +28,9 @@ public interface EInvoiceService {
 
 	EwayBillDTO getEWayBillByDocIdnew(String docIds);
 	
-	Map<String, Object> generateToken(EInvoiceGetToketDTO eInvoiceGetToketDTO) throws JsonProcessingException, Exception;
+//	Map<String, Object> generateToken(EInvoiceGetToketDTO eInvoiceGetToketDTO) throws JsonProcessingException, Exception;
+
+	Map<String, Object> generateToken(List<EInvoiceGetToketDTO> eInvoiceGetToketDTO1) throws Exception;
 	
 
 }
