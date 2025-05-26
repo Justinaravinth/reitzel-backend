@@ -16,7 +16,7 @@ public interface HeaderDetailsRepo extends JpaRepository<HeaderDetailsVO, Long> 
 
 	HeaderDetailsVO findByUserName(String userName);
 
-	@Query(value = "select e.user_name from einvoiceheader e where e.gentokenflag='T' GROUP BY e.user_name",nativeQuery = true)
+	@Query(value = "select user_name from einvoiceheader  where token_expiry < to_char(sysdate, 'YYYY-MM-DD HH24:MI:SS') or token_expiry is null",nativeQuery = true)
 	List<Object[]> getAutomationTokenDetails();
 
 }

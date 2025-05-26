@@ -27,7 +27,6 @@ public class HeaderDetailsVO {
 	private String sek;
 	private String tokenExpiry;
 	private String pwd;
-	private String gentokenflag;
 	
 
 }

@@ -805,7 +805,6 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 					headerDetailsVO.setSek(base64DecryptedSek);
 					headerDetailsVO.setAuthtoken(AuthToken);
 					headerDetailsVO.setTokenExpiry(TokenExpiry);
-					headerDetailsVO.setGentokenflag("F");
 					headerDetailsRepo.save(headerDetailsVO);
 					token.put("ClientId", ClientId);
 					token.put("UserName", UserName);
@@ -863,7 +862,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		return keyFactory.generatePublic(spec);
 	}
 
-	@Scheduled(fixedRate = 20000)
+	@Scheduled(fixedRate = 2000)
 	public void processTokenAutomation() throws Exception {
 		System.out.println("Running Token Automation service every 1 Sec...");
 		// Replace with actual branchCode
