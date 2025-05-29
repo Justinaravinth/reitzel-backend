@@ -28,10 +28,10 @@ public class EwayBillResponseVO {
 	private Long id;
 	
 	private LocalDateTime createdOn= LocalDateTime.now();
-	//private String docid;
-	
-	private String irn;
-	
+	private String docid;	
+	private String iserror;
+	private String message;
+	private String errordetails;
 	@Lob
 	@Column(columnDefinition = "CLOB")
 	private String response;

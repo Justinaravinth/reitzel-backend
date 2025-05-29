@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.reitzel.invoiceApproval.entity.EInvoiceVO;
-import com.reitzel.invoiceApproval.entity.EwayBillVO;
 
 public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 
@@ -97,7 +96,7 @@ public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 			+ "       e.transdocno, e.transdocdate, e.vehicleno, e.vehicletype, \r\n"
 			+ "       e.buyeradd1,e.ADD2 buyeradd2,  e.buyerlocation, e.buyerpincode, \r\n"
 			+ "       e.buyerstcd, e.SELLERLEGALNAME,e.SELLERADD1,e.SELLERADD2,e.SELLERLOCATION,e.SELLERPINCODE,e.SELLERSTCD\r\n"
-			+ "FROM einvoice e where e.IRN is not null and irn=?1\r\n"
+			+ "FROM einvoice e where e.IRN is not null and docid=?1\r\n"
 			+ "GROUP BY e.irn, e.distance, e.transmode, e.transid, e.transname, \r\n"
 			+ "         e.transdocno, e.transdocdate, e.vehicleno, e.vehicletype, \r\n"
 			+ "         e.buyeradd1, e.add2, e.buyerlocation, e.buyerpincode, \r\n"
@@ -106,12 +105,14 @@ public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 
 	@Query(nativeQuery =true,value ="SELECT a.user_name, a.gstin, a.CLIENT_ID, a.CLIENT_SECRET, a.AUTHTOKEN, a.SEK \r\n"
 			+ "FROM einvoiceheader a, einvoice b \r\n"
-			+ "WHERE a.GSTIN = b.SELLERGSTIN AND b.irn =?1 \r\n"
+			+ "WHERE a.GSTIN = b.SELLERGSTIN AND b.docid =?1 \r\n"
 			+ "GROUP BY a.user_name, a.gstin, a.CLIENT_ID, a.CLIENT_SECRET, a.AUTHTOKEN, a.SEK")
 	Set<Object[]> getEwayHeaderDetails(String irn);
 
-	@Query(value="select * from einvoice where irn=?1",nativeQuery =true)
-	List<EInvoiceVO> getIrnDetails(String irn);
+	@Query(value="select * from einvoice where docid=?1",nativeQuery =true)
+	List<EInvoiceVO> getIrnDetails(String docId);
+	
+
 
 
 

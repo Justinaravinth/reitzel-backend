@@ -69,14 +69,14 @@ public class EinvoiceAuthController extends BaseController {
 	
 	
 	@PostMapping("/createEWayBill")
-	public ResponseEntity<ResponseDTO> createEWayBill(@RequestParam List<String> irn) {
+	public ResponseEntity<ResponseDTO> createEWayBill(@RequestParam List<String> docId) {
 		String methodName = "createEWayBill()";
 		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
 		String errorMsg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<>();
 		ResponseDTO responseDTO = null;
 		try {
-			Map<String, Object> ewayResponseDTO = eInvoiceService.createEWayBill(irn);
+			Map<String, Object> ewayResponseDTO = eInvoiceService.createEWayBill(docId);
 			responseObjectsMap.put(CommonConstant.STRING_MESSAGE, "EwayBill Generated Successfully");
 			responseObjectsMap.put("ewayResponseDTO", ewayResponseDTO);
 		} catch (Exception e) {

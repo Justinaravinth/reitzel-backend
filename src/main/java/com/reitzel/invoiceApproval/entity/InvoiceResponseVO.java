@@ -34,6 +34,10 @@ public class InvoiceResponseVO {
 	@Column(columnDefinition = "CLOB")
 	private String response;
 	
+	private String iserror;
+	private String message;
+	private String errordetails;
+	
 	
 
 }

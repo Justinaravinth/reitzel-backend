@@ -61,7 +61,6 @@ import com.reitzel.invoiceApproval.entity.HeaderDetailsVO;
 import com.reitzel.invoiceApproval.entity.IRNResponseVO;
 import com.reitzel.invoiceApproval.entity.InvoiceResponseVO;
 import com.reitzel.invoiceApproval.repo.EInvoiceRepo;
-import com.reitzel.invoiceApproval.repo.EwayBillRepo;
 import com.reitzel.invoiceApproval.repo.EwayBillResponseRepo;
 import com.reitzel.invoiceApproval.repo.EwayHeadersRepo;
 import com.reitzel.invoiceApproval.repo.EwayResponseRepo;
@@ -89,9 +88,6 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 	@Autowired
 	EwayResponseRepo ewayResponseRepo;
-
-	@Autowired
-	EwayBillRepo ewayBillRepo;
 
 	@Autowired
 	EwayHeadersRepo ewayHeadersRepo;
@@ -305,6 +301,30 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 				InvoiceResponseVO invoiceResponseVO = new InvoiceResponseVO();
 				invoiceResponseVO.setDocid(docId);
 				invoiceResponseVO.setResponse(response.getBody());
+				ObjectMapper objectMapper5 = new ObjectMapper();
+				Map<String, Object> mp1 = objectMapper5.readValue(response.getBody(),
+						new TypeReference<Map<String, Object>>() {
+						});
+				if (mp1.get("Status").equals(0)) {
+					invoiceResponseVO.setIserror("Y");
+					Object errorDetailsObj = mp1.get("ErrorDetails");
+					if (errorDetailsObj instanceof List) {
+						List<?> errorDetailsList = (List<?>) errorDetailsObj;
+						if (!errorDetailsList.isEmpty() && errorDetailsList.get(0) instanceof Map) {
+							Map<?, ?> firstError = (Map<?, ?>) errorDetailsList.get(0);
+							Object errorCode = firstError.get("ErrorCode");
+							Object errorMessage = firstError.get("ErrorMessage");
+							if (errorCode != null) {
+								invoiceResponseVO.setMessage("ErrorCode: " + errorCode.toString());
+								invoiceResponseVO.setErrordetails(errorMessage.toString());
+							}
+						}
+					}
+
+				} else {
+					invoiceResponseVO.setIserror("N");
+					invoiceResponseVO.setMessage("IRN Generated");
+				}
 				for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
 					eInvoiceVO.setApicall("T");
 					updatedEInvoiceVOs.add(eInvoiceVO);
@@ -501,10 +521,10 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 	}
 
 	@Override
-	public Map<String, Object> createEWayBill(List<String> irnNo) throws JsonProcessingException {
+	public Map<String, Object> createEWayBill(List<String> docId) throws JsonProcessingException {
 		String message = null;
 		EwayResponseDTO ewayResponseDTO = new EwayResponseDTO();
-		for (String irn : irnNo) {
+		for (String irn : docId) {
 
 			List<EInvoiceVO> eInvoiceVOs = eInvoiceRepo.getIrnDetails(irn);
 			List<EInvoiceVO> updatedEInvoiceVOs = new ArrayList<>();
@@ -544,7 +564,6 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			String name = objectMapper.writeValueAsString(eWayPaload);
 			String encryptedName = encryptBySymmetricKey1(name, sek);
 			payloadDTO.setData(encryptedName);
-
 			String url = "https://einv1api.gstsandbox.nic.in/eiewb/v1.03/ewaybill";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("client_id", clientId);
@@ -562,8 +581,32 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 				System.out.println("Raw Response: " + response.getBody());
 				EwayBillResponseVO ewayBillResponseVO = new EwayBillResponseVO();
-				ewayBillResponseVO.setIrn(irn);
+				ewayBillResponseVO.setDocid(irn);
 				ewayBillResponseVO.setResponse(response.getBody());
+				ObjectMapper objectMapper5 = new ObjectMapper();
+				Map<String, Object> mp1 = objectMapper5.readValue(response.getBody(),
+						new TypeReference<Map<String, Object>>() {
+						});
+				if (mp1.get("Status").equals(0)) {
+					ewayBillResponseVO.setIserror("Y");
+					Object errorDetailsObj = mp1.get("ErrorDetails");
+					if (errorDetailsObj instanceof List) {
+						List<?> errorDetailsList = (List<?>) errorDetailsObj;
+						if (!errorDetailsList.isEmpty() && errorDetailsList.get(0) instanceof Map) {
+							Map<?, ?> firstError = (Map<?, ?>) errorDetailsList.get(0);
+							Object errorCode = firstError.get("ErrorCode");
+							Object errorMessage = firstError.get("ErrorMessage");
+							if (errorCode != null) {
+								ewayBillResponseVO.setMessage("ErrorCode: " + errorCode.toString());
+								ewayBillResponseVO.setErrordetails(errorMessage.toString());
+							}
+						}
+					}
+
+				} else {
+					ewayBillResponseVO.setIserror("N");
+					ewayBillResponseVO.setMessage("E-Way Generated");
+				}
 				for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
 					eInvoiceVO.setApicall("T");
 					updatedEInvoiceVOs.add(eInvoiceVO);
@@ -666,9 +709,9 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 	}
 
 	@Override
-	public EwayBillDTO getEWayBillByDocIdnew(String irnNo) {
+	public EwayBillDTO getEWayBillByDocIdnew(String docId) {
 		EwayBillDTO ewayBillDTOs = new EwayBillDTO();
-		String irn = irnNo;
+		String irn = docId;
 		Set<Object[]> headerDetails = eInvoiceRepo.getEwayBillDetails(irn);
 
 		if (headerDetails != null && !headerDetails.isEmpty()) {
@@ -682,9 +725,16 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 				ewayBillDTO.setTransId(header[3] != null ? header[3].toString() : null);
 				ewayBillDTO.setTransName(header[4] != null ? header[4].toString() : null);
 				ewayBillDTO.setTransDocNo(header[5] != null ? header[5].toString() : null);
-				String dateString = header[6].toString();
-				String formattedDate = formatDate(dateString);
-				ewayBillDTO.setTransDocDt(formattedDate);
+//				String dateString = header[6].toString();
+//				String formattedDate = formatDate(dateString);
+//				ewayBillDTO.setTransDocDt(formattedDate);
+				String dateString = header[6] != null ? header[6].toString().trim() : null;
+				if (dateString == null || dateString.isEmpty()) {
+					ewayBillDTO.setTransDocDt(null);
+				} else {
+					String formattedDate = formatDate(dateString);
+					ewayBillDTO.setTransDocDt(formattedDate);
+				}
 				ewayBillDTO.setVehNo(header[7] != null ? header[7].toString() : null);
 				ewayBillDTO.setVehType(header[8] != null ? header[8].toString() : null);
 
