@@ -97,6 +97,8 @@ public class EInvoiceVO {
 	
 	private String apicall;
 	
+	private String eapicall;
+	
 	private String irnstatus;
 	
 	private String ewaystatus;
@@ -112,6 +114,10 @@ public class EInvoiceVO {
 	@Lob
 	@Column(columnDefinition = "CLOB")
 	private String signedqrcode;
+
+
+
+	
 	
 
 }

@@ -608,7 +608,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 					ewayBillResponseVO.setMessage("E-Way Generated");
 				}
 				for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
-					eInvoiceVO.setApicall("T");
+					eInvoiceVO.setEapicall("T");
 					updatedEInvoiceVOs.add(eInvoiceVO);
 				}
 				eInvoiceRepo.saveAll(updatedEInvoiceVOs);
@@ -652,6 +652,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 									? decryptedMap.get("EwbValidTill").toString()
 									: "");
 							ewayResponseVO1.setDocid(eInvoiceVO1.getDocid());
+							eInvoiceVO1.setEwaystatus("T");
 							updatedEInvoiceVOs.add(eInvoiceVO1);
 							;
 						}
@@ -659,6 +660,12 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 						ewayResponseRepo.save(ewayResponseVO1);
 
+					}else {
+						for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
+							eInvoiceVO.setEwaystatus("F");
+							updatedEInvoiceVOs.add(eInvoiceVO);
+						}
+						eInvoiceRepo.saveAll(updatedEInvoiceVOs);
 					}
 				}
 				message = "EwayBill Genaretd Successfully";
