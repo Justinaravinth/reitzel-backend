@@ -282,8 +282,10 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			String encryptedName = encryptBySymmetricKey(name, sek);
 
 			payloadDTO.setData(encryptedName);
-
-			String url = "https://api.einvoice1.gst.gov.in/eicore/v1.03/Invoice";
+			// SandBox API
+//			String url = "https://einv1api.gstsandbox.nic.in/eicore/v1.03/Invoice";
+			// Live API
+			 String url = "https://api.einvoice1.gst.gov.in/eicore/v1.03/Invoice";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("client_id", clientId);
 			headers.set("client_secret", clientSecret);
@@ -660,7 +662,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 						ewayResponseRepo.save(ewayResponseVO1);
 
-					}else {
+					} else {
 						for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
 							eInvoiceVO.setEwaystatus("F");
 							updatedEInvoiceVOs.add(eInvoiceVO);
@@ -818,7 +820,10 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			PayloadDTO payloadDTO = new PayloadDTO();
 			payloadDTO.setData(encryptedPayload);
 
-			String url = "https://api.einvoice1.gst.gov.in/eivital/v1.04/auth";
+			// SandBox API
+//			String url = "https://einv1api.gstsandbox.nic.in/eivital/v1.04/auth";
+			// Live API
+			 String url = "https://api.einvoice1.gst.gov.in/eivital/v1.04/auth";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("client_id", clientId);
 			headers.set("client_secret", clientSecret);
