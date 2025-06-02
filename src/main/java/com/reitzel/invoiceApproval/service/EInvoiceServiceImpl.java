@@ -566,7 +566,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			String encryptedName = encryptBySymmetricKey1(name, sek);
 			payloadDTO.setData(encryptedName);
 			// Live API
-			String url ="https://api.einvoice1.gst.gov.in/eiewb/v1.03/ewaybill";
+			String url ="https://api.ewaybillgst.gov.in/v1.03/ewaybill";
 			// SandBox API
 //			String url = "https://einv1api.gstsandbox.nic.in/eiewb/v1.03/ewaybill";
 			HttpHeaders headers = new HttpHeaders();
