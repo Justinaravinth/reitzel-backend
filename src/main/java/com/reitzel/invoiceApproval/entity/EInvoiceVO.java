@@ -95,6 +95,8 @@ public class EInvoiceVO {
 	
 	private String geneinvoice;
 	
+	private String genewaybill;
+	
 	private String apicall;
 	
 	private String eapicall;

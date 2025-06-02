@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
 import com.reitzel.invoiceApproval.dto.EInvoiceGetToketDTO;
 import com.reitzel.invoiceApproval.dto.EwayBillDTO;
-import com.reitzel.invoiceApproval.dto.EwayResponseDTO;
+import com.reitzel.invoiceApproval.dto.EwayBillNonIRNDTO;
 import com.reitzel.invoiceApproval.entity.EInvoiceVO;
 
 @Service
@@ -31,6 +31,10 @@ public interface EInvoiceService {
 //	Map<String, Object> generateToken(EInvoiceGetToketDTO eInvoiceGetToketDTO) throws JsonProcessingException, Exception;
 
 	Map<String, Object> generateToken(List<EInvoiceGetToketDTO> eInvoiceGetToketDTO1) throws Exception;
+
+	EwayBillNonIRNDTO generateEwayBillByNonIRN();
+
+//	Map<String, Object> createEWayBillNonIRN(EwayBillNonIRNDTO ewayBillNonIRNDTO) throws JsonProcessingException;
 	
 
 }

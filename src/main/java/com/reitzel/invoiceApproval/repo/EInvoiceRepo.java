@@ -111,6 +111,9 @@ public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 
 	@Query(value="select * from einvoice where docid=?1",nativeQuery =true)
 	List<EInvoiceVO> getIrnDetails(String docId);
+
+	@Query(nativeQuery = true,value = "select docid,docdate from ewaybillgenerate")
+	List<Object[]> getPendingEwayDetails();
 	
 
 

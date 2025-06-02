@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.reitzel.invoiceApproval.common.CommonConstant;
 import com.reitzel.invoiceApproval.common.UserConstants;
+import com.reitzel.invoiceApproval.dto.EwayBillNonIRNDTO;
 import com.reitzel.invoiceApproval.dto.EwayResponseDTO;
 import com.reitzel.invoiceApproval.dto.ResponseDTO;
 import com.reitzel.invoiceApproval.service.EInvoiceService;

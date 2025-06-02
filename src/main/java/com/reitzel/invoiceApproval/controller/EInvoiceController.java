@@ -21,6 +21,7 @@ import com.reitzel.invoiceApproval.common.UserConstants;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
 import com.reitzel.invoiceApproval.dto.EInvoiceGetToketDTO;
 import com.reitzel.invoiceApproval.dto.EwayBillDTO;
+import com.reitzel.invoiceApproval.dto.EwayBillNonIRNDTO;
 import com.reitzel.invoiceApproval.dto.ResponseDTO;
 import com.reitzel.invoiceApproval.entity.EInvoiceVO;
 import com.reitzel.invoiceApproval.service.EInvoiceService;
@@ -159,5 +160,30 @@ public class EInvoiceController extends BaseController  {
 		}
 		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
 		return ResponseEntity.ok().body(responseDTO);
+	}
+	
+	@GetMapping("/getEwayBillNonIRNByDocId")
+	public ResponseEntity<EwayBillNonIRNDTO> getEwayBillNonIRNByDocId() {
+		String methodName = "getEwayBillNonIRNByDocId()";
+		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
+		String errorMsg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<>();
+		ResponseDTO responseDTO = null;
+		EwayBillNonIRNDTO ewayBillDTO = new EwayBillNonIRNDTO();
+		try {
+			ewayBillDTO = eInvoiceService.generateEwayBillByNonIRN();
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
+		}
+		if (StringUtils.isBlank(errorMsg)) {
+			responseObjectsMap.put(CommonConstant.STRING_MESSAGE, "EWayBill Information Get Successfully");
+			responseObjectsMap.put("ewayBillDTO", ewayBillDTO);
+			responseDTO = createServiceResponse(responseObjectsMap);
+		} else {
+			responseDTO = createServiceResponseError(responseObjectsMap, "EWayBill Information Get Filed", errorMsg);
+		}
+		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
+		return ResponseEntity.ok().body(ewayBillDTO);
 	}
 }
