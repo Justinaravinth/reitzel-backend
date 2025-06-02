@@ -565,10 +565,11 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			String name = objectMapper.writeValueAsString(eWayPaload);
 			String encryptedName = encryptBySymmetricKey1(name, sek);
 			payloadDTO.setData(encryptedName);
-			// Live API
-			String url ="https://api.einvoice1.gst.gov.in/eiewb/v1.03/ewayapi";
+			
 			// SandBox API
 //			String url = "https://einv1api.gstsandbox.nic.in/eiewb/v1.03/ewaybill";
+			// Live API
+			String url ="https://api.einvoice1.gst.gov.in/eiewb/v1.03/ewaybill";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("client_id", clientId);
 			headers.set("client_secret", clientSecret);
@@ -758,7 +759,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 																											// to 0 if
 																											// null
 				expShipDetailsDTO.setStcd(header[13] != null ? header[13].toString() : null);
-				ewayBillDTO.setExpShipDetails(expShipDetailsDTO);
+//				ewayBillDTO.setExpShipDetails(expShipDetailsDTO);
 
 				// DispatchDetailsDTO (Seller Details)
 				DispatchDetailsDTO dispatchDetailsDTO = new DispatchDetailsDTO();
@@ -771,7 +772,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 																												// if
 																												// null
 				dispatchDetailsDTO.setStcd(header[19] != null ? header[19].toString() : null);
-				ewayBillDTO.setDispatchDetails(dispatchDetailsDTO);
+//				ewayBillDTO.setDispatchDetails(dispatchDetailsDTO);
 				ewayBillDTOs = ewayBillDTO;
 			}
 		}
@@ -997,6 +998,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 	@Override
 	public EwayBillNonIRNDTO generateEwayBillByNonIRN() {
 		EwayBillNonIRNDTO ewayBillNonIRNDTO= new EwayBillNonIRNDTO();
+		
 		List<ItemListDTO>itemListDTO= new ArrayList<>();
 		ItemListDTO itemListDTO2= new ItemListDTO();
 		itemListDTO.add(itemListDTO2);
@@ -1046,7 +1048,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 //			String name = objectMapper.writeValueAsString(eWayPaload);
 //			String encryptedName = encryptBySymmetricKey1(name, sek);
 //			payloadDTO.setData(encryptedName);
-//			String url = "https://einv1api.gstsandbox.nic.in/eiewb/v1.03/ewaybill";
+//			String url = "https://ewb1api.gstsandbox.nic.in/ewaybillapi/v1.03/ewayapi";
 //			HttpHeaders headers = new HttpHeaders();
 //			headers.set("client_id", clientId);
 //			headers.set("client_secret", clientSecret);
