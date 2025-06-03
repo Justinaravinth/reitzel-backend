@@ -41,10 +41,10 @@ public class EwayBillDTO {
 	private String VehType;
 	
 	
-//	@JsonProperty("ExpShipDtls")
-//	private ExpShipDetailsDTO expShipDetails;
-//	
-//	@JsonProperty("DispDtls")
-//	private DispatchDetailsDTO dispatchDetails;
+	@JsonProperty("ExpShipDtls")
+	private ExpShipDetailsDTO expShipDetails;
+	
+	@JsonProperty("DispDtls")
+	private DispatchDetailsDTO dispatchDetails;
 
 }

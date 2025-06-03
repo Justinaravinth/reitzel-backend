@@ -30,7 +30,7 @@ public class EwayBillNonIRNDTO {
 	@JsonProperty("docNo")
 	private String docNo;
 
-	@JsonProperty("docDate")
+	 @JsonProperty("docDate")
 	 @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
 	private String docDate;
 	
@@ -106,8 +106,8 @@ public class EwayBillNonIRNDTO {
 	@JsonProperty("cessNonAdvolValue")
     private double cessNonAdvolValue;
 	
-	@JsonProperty("totalInvValue")
-    private double totalInvValue;
+	@JsonProperty("totInvValue")
+    private double totInvValue;
 	
 	@JsonProperty("transporterId")
 	private String transporterId;

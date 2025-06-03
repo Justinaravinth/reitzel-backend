@@ -32,6 +32,7 @@ public class EwayBillResponseVO {
 	private String iserror;
 	private String message;
 	private String errordetails;
+	
 	@Lob
 	@Column(columnDefinition = "CLOB")
 	private String response;

@@ -163,7 +163,7 @@ public class EInvoiceController extends BaseController  {
 	}
 	
 	@GetMapping("/getEwayBillNonIRNByDocId")
-	public ResponseEntity<EwayBillNonIRNDTO> getEwayBillNonIRNByDocId() {
+	public ResponseEntity<EwayBillNonIRNDTO> getEwayBillNonIRNByDocId(@RequestParam String docid) {
 		String methodName = "getEwayBillNonIRNByDocId()";
 		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
 		String errorMsg = null;
@@ -171,7 +171,7 @@ public class EInvoiceController extends BaseController  {
 		ResponseDTO responseDTO = null;
 		EwayBillNonIRNDTO ewayBillDTO = new EwayBillNonIRNDTO();
 		try {
-			ewayBillDTO = eInvoiceService.generateEwayBillByNonIRN();
+			ewayBillDTO = eInvoiceService.generateEwayBillByNonIRN(docid);
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
 			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);

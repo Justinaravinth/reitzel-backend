@@ -36,6 +36,10 @@ public class EwayResponseVO {
 	private String docid;
 	
 	private String irn;
+	
+	private String alert;
+	
+	private String type;
 
 	private LocalDateTime createdOn= LocalDateTime.now();
 }
