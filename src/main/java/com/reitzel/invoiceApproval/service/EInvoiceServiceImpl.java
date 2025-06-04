@@ -1163,7 +1163,6 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 						ewayBillResponseVO.setIserror("N");
 						ewayBillResponseVO.setMessage("E-Way Generated");
 						ewayBillResponseRepo.save(ewayBillResponseVO);
-						;
 					}
 				} else {
 					// Handle error response
@@ -1219,7 +1218,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			// Call the service method with the collected docIds
 			if (!docIds.isEmpty()) {
 				System.out.println(" Process Success.");
-				createEWayBillNonIRN(docIds);
+//				createEWayBillNonIRN(docIds);
 
 			} else {
 				System.out.println("No docIds found to process.");
