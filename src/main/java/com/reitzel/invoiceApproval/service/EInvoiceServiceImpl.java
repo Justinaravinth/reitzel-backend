@@ -753,7 +753,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 				ewayBillDTO.setVehType(header[8] != null ? header[8].toString() : null);
 
 				String supType = eInvoiceRepo.getSupType(irn);
-				if (!supType.equals("B2B")) {
+				if (!supType.equals("B2B")) { 
 					// ExpShipDetailsDTO (Buyer Details)
 					ExpShipDetailsDTO expShipDetailsDTO = new ExpShipDetailsDTO();
 					expShipDetailsDTO.setAddr1(header[9] != null ? header[9].toString() : null);
