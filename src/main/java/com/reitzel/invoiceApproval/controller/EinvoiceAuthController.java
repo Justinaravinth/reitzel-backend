@@ -108,5 +108,24 @@ public class EinvoiceAuthController extends BaseController {
 	}
 	
 	
+	@PostMapping("/cancelIRNdetails")
+	public ResponseEntity<ResponseDTO> cancelIRNdetails(@RequestParam List<String> docId) {
+		String methodName = "cancelIRNdetails()";
+		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
+		String errorMsg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<>();
+		ResponseDTO responseDTO = null;
+		try {
+			Map<String, Object> ewayResponseDTO = eInvoiceService.cancelIRNInvoice(docId);
+			responseObjectsMap.put(CommonConstant.STRING_MESSAGE, "EwayBill Generated Successfully");
+			responseObjectsMap.put("ewayResponseDTO", ewayResponseDTO);
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
+		}
+		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
+		return ResponseEntity.ok().body(responseDTO);
+	}
+	
 
 }

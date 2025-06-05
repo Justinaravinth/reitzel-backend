@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reitzel.invoiceApproval.dto.BchDtlsDTO;
 import com.reitzel.invoiceApproval.dto.BuyerDetailsDTO;
+import com.reitzel.invoiceApproval.dto.CancelIRNDTO;
 import com.reitzel.invoiceApproval.dto.DispatchDetailsDTO;
 import com.reitzel.invoiceApproval.dto.DocumentDetailsDTO;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
@@ -57,12 +58,14 @@ import com.reitzel.invoiceApproval.dto.ShippingDetailsDTO;
 import com.reitzel.invoiceApproval.dto.TransactionDetailsDTO;
 import com.reitzel.invoiceApproval.dto.ValueDetailsDTO;
 import com.reitzel.invoiceApproval.entity.EInvoiceVO;
+import com.reitzel.invoiceApproval.entity.EwayBillDirectVO;
 import com.reitzel.invoiceApproval.entity.EwayBillResponseVO;
 import com.reitzel.invoiceApproval.entity.EwayResponseVO;
 import com.reitzel.invoiceApproval.entity.HeaderDetailsVO;
 import com.reitzel.invoiceApproval.entity.IRNResponseVO;
 import com.reitzel.invoiceApproval.entity.InvoiceResponseVO;
 import com.reitzel.invoiceApproval.repo.EInvoiceRepo;
+import com.reitzel.invoiceApproval.repo.EwayBillDirectRepo;
 import com.reitzel.invoiceApproval.repo.EwayBillResponseRepo;
 import com.reitzel.invoiceApproval.repo.EwayHeadersRepo;
 import com.reitzel.invoiceApproval.repo.EwayResponseRepo;
@@ -90,6 +93,9 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 	@Autowired
 	EwayResponseRepo ewayResponseRepo;
+	
+	@Autowired
+	EwayBillDirectRepo ewayBillDirectRepo;
 
 	@Autowired
 	EwayHeadersRepo ewayHeadersRepo;
@@ -557,7 +563,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			EwayBillResponseDTO ewayBillResponseDTO = new EwayBillResponseDTO();
 
 			PayloadDTO payloadDTO = new PayloadDTO();
-			EwayBillDTO dto=getEWayBillByDocIdnew(irn);
+			EwayBillDTO dto = getEWayBillByDocIdnew(irn);
 			Object eWayPaload = getEWayBillByDocIdnew(irn);
 
 			// Convert object to JSON string
@@ -753,7 +759,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 				ewayBillDTO.setVehType(header[8] != null ? header[8].toString() : null);
 
 				String supType = eInvoiceRepo.getSupType(irn);
-				if (!supType.equals("B2B")) { 
+				if (!supType.equals("B2B")) {
 					// ExpShipDetailsDTO (Buyer Details)
 					ExpShipDetailsDTO expShipDetailsDTO = new ExpShipDetailsDTO();
 					expShipDetailsDTO.setAddr1(header[9] != null ? header[9].toString() : null);
@@ -771,7 +777,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 					dispatchDetailsDTO.setStcd(header[19] != null ? header[19].toString() : null);
 					ewayBillDTO.setDispatchDetails(dispatchDetailsDTO);
 				}
-				
+
 				ewayBillDTOs = ewayBillDTO;
 			}
 		}
@@ -993,8 +999,6 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		}
 
 	}
-	
-	
 
 	@Override
 	public EwayBillNonIRNDTO generateEwayBillByNonIRN(String docIds) {
@@ -1084,7 +1088,8 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			String clientSecret = "";
 			String authToken = "";
 			String sek = "";
-
+			List<EwayBillDirectVO> ewayBillDirectVOs = ewayBillDirectRepo.getDocidDetails(docId);
+			List<EwayBillDirectVO> updatedEwayBillDirectVOs = new ArrayList<>();
 			Set<Object[]> headerDetails = ewayBillResponseRepo.getEwayHeaderDetails(docid);
 			if (!headerDetails.isEmpty()) {
 				Object[] firstRow = headerDetails.iterator().next(); // Get the first row
@@ -1126,7 +1131,13 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			try {
 				ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
 
+				
 				System.out.println("Raw Response: " + response.getBody());
+				for (EwayBillDirectVO eBillDirectVO : ewayBillDirectVOs) {
+					eBillDirectVO.setEapicall("T");
+					updatedEwayBillDirectVOs.add(eBillDirectVO); // ✅ Add to a separate list
+				}
+				ewayBillDirectRepo.saveAll(updatedEwayBillDirectVOs);
 				EwayBillResponseVO ewayBillResponseVO = new EwayBillResponseVO();
 				ewayBillResponseVO.setDocid(docid);
 				ewayBillResponseVO.setResponse(response.getBody());
@@ -1163,8 +1174,23 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 						ewayBillResponseVO.setIserror("N");
 						ewayBillResponseVO.setMessage("E-Way Generated");
 						ewayBillResponseRepo.save(ewayBillResponseVO);
+						
+						for (EwayBillDirectVO eBillDirectVO : ewayBillDirectVOs) {
+							eBillDirectVO.setEwbno(ewayResponseVO1.getEwbno());
+							eBillDirectVO.setEwbdate(ewayResponseVO1.getEwbdate());
+							eBillDirectVO.setEwbvalidtill(ewayResponseVO1.getEwvalidtill());
+							eBillDirectVO.setEwaystatus("T");
+							updatedEwayBillDirectVOs.add(eBillDirectVO); 
+						}
+						ewayBillDirectRepo.saveAll(updatedEwayBillDirectVOs);
 					}
 				} else {
+					
+					for (EwayBillDirectVO eBillDirectVO : ewayBillDirectVOs) {
+						eBillDirectVO.setEwaystatus("F");
+						updatedEwayBillDirectVOs.add(eBillDirectVO); // ✅ Add to a separate list
+					}
+					ewayBillDirectRepo.saveAll(updatedEwayBillDirectVOs);
 					// Handle error response
 					String encodedError = (String) mp12.get("error");
 					if (encodedError != null) {
@@ -1196,7 +1222,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 		response.put("message", message);
 		return response;
 	}
-	
+
 	@Scheduled(fixedRate = 2000)
 	public void processEWayBillNonIRN() throws JsonProcessingException {
 		System.out.println("Running E-Way service every 1 Sec...");
@@ -1211,14 +1237,14 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			List<String> docIds = new ArrayList<>();
 			for (Object[] record : getPendingEwayDetails) {
 				if (record != null && record.length > 0) {
-					String docId = record[0].toString(); // Assuming docId is the first column
+					String docId = record[0].toString(); 
 					docIds.add(docId);
 				}
 			}
 			// Call the service method with the collected docIds
 			if (!docIds.isEmpty()) {
 				System.out.println(" Process Success.");
-//				createEWayBillNonIRN(docIds);
+				createEWayBillNonIRN(docIds);
 
 			} else {
 				System.out.println("No docIds found to process.");
@@ -1227,5 +1253,169 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			System.out.println("List is null.");
 		}
 
+	}
+
+	@Override
+	public CancelIRNDTO cancelIRN(String docIds) {
+		CancelIRNDTO cancelIRNDTOs = new CancelIRNDTO();
+
+		String docId = docIds;
+		Set<Object[]> headerDetails1 = eInvoiceRepo.getIrnDetailsForCancel(docId);
+
+		if (headerDetails1 != null && !headerDetails1.isEmpty()) {
+			for (Object[] header : headerDetails1) {
+				CancelIRNDTO cancelIRNDTO = new CancelIRNDTO();
+				// Populate TransactionDetailsDTO
+				cancelIRNDTO.setIrn(header[0] != null ? header[0].toString() : null);
+				cancelIRNDTO.setCnlRsn("1");
+				cancelIRNDTO.setCnlRem("Wrong Entry");
+				cancelIRNDTOs = cancelIRNDTO;
+			}
+		}
+		return cancelIRNDTOs;
+	}
+	
+	@Override
+	public Map<String, Object> cancelIRNInvoice(List<String> docIds) throws JsonProcessingException {
+
+		String message = null;
+		List<IRNResponseDTO> irnResponse = new ArrayList<>();
+		for (String docId : docIds) {
+
+			List<EInvoiceVO> eInvoiceVOs = eInvoiceRepo.getDocidDetails(docId);
+			List<EInvoiceVO> updatedEInvoiceVOs = new ArrayList<>();
+
+			String userName = "";
+			String gstin = "";
+			String clientId = "";
+			String clientSecret = "";
+			String authToken = "";
+			String sek = "";
+
+			Set<Object[]> headerDetails = headerDetailsRepo.getHeaderDetails(docId);
+			if (!headerDetails.isEmpty()) {
+				Object[] firstRow = headerDetails.iterator().next(); // Get the first row
+
+				userName = firstRow[0].toString();
+				gstin = firstRow[1].toString();
+				clientId = firstRow[2].toString();
+				clientSecret = firstRow[3].toString();
+				authToken = firstRow[4].toString();
+				sek = firstRow[5].toString();
+			}
+
+			PayloadDTO payloadDTO = new PayloadDTO();
+			IRNResponseVO irnResponseVO = irnResponseRepo.findByDocid(docId);
+
+			InvoiceResponseDTO invoiceResponseDTO = new InvoiceResponseDTO();
+			
+
+			Object eInvoicePayload = cancelIRN(docId);
+
+			// Convert object to JSON string
+			ObjectMapper objectMapper = new ObjectMapper();
+			String name = objectMapper.writeValueAsString(eInvoicePayload);
+			String encryptedName = encryptBySymmetricKey(name, sek);
+
+			payloadDTO.setData(encryptedName);
+			System.out.println(encryptedName);
+			// SandBox API
+			String url = "https://einv1api.gstsandbox.nic.in/eicore/v1.03/Invoice/Cancel";
+			// Live API
+//			 String url = "https://api.einvoice1.gst.gov.in/eicore/v1.03/Invoice";
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("client_id", clientId);
+			headers.set("client_secret", clientSecret);
+			headers.set("gstin", gstin);
+			headers.set("user_name", userName);
+			headers.set("authtoken", authToken);
+			headers.setContentType(MediaType.APPLICATION_JSON);
+
+			HttpEntity<PayloadDTO> request = new HttpEntity<>(payloadDTO, headers);
+			RestTemplate restTemplate = new RestTemplate();
+			try {
+				ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+
+				System.out.println("Raw Response: " + response.getBody());
+				InvoiceResponseVO invoiceResponseVO = new InvoiceResponseVO();
+				invoiceResponseVO.setDocid(docId);
+				invoiceResponseVO.setResponse(response.getBody());
+				ObjectMapper objectMapper5 = new ObjectMapper();
+				Map<String, Object> mp1 = objectMapper5.readValue(response.getBody(),
+						new TypeReference<Map<String, Object>>() {
+						});
+				if (mp1.get("Status").equals(0)) {
+					invoiceResponseVO.setIserror("Y");
+					Object errorDetailsObj = mp1.get("ErrorDetails");
+					if (errorDetailsObj instanceof List) {
+						List<?> errorDetailsList = (List<?>) errorDetailsObj;
+						if (!errorDetailsList.isEmpty() && errorDetailsList.get(0) instanceof Map) {
+							Map<?, ?> firstError = (Map<?, ?>) errorDetailsList.get(0);
+							Object errorCode = firstError.get("ErrorCode");
+							Object errorMessage = firstError.get("ErrorMessage");
+							if (errorCode != null) {
+								invoiceResponseVO.setMessage("ErrorCode: " + errorCode.toString());
+								invoiceResponseVO.setErrordetails(errorMessage.toString());
+							}
+						}
+					}
+
+				} else {
+					invoiceResponseVO.setIserror("N");
+					invoiceResponseVO.setMessage("IRN Generated");
+				}
+				for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
+					eInvoiceVO.setApicall("T");
+					updatedEInvoiceVOs.add(eInvoiceVO);
+				}
+				eInvoiceRepo.saveAll(updatedEInvoiceVOs);
+				invoiceResponseRepo.save(invoiceResponseVO);
+				// Convert JSON response to a Map
+				ObjectMapper objectMapper1 = new ObjectMapper();
+				Map<String, Object> mp = objectMapper1.readValue(response.getBody(),
+						new TypeReference<Map<String, Object>>() {
+						});
+
+				// Map to InvoiceResponse object
+				invoiceResponseDTO
+						.setStatus(mp.get("Status") != null ? Integer.parseInt(mp.get("Status").toString()) : 0);
+				invoiceResponseDTO
+						.setErrorDetails(mp.get("ErrorDetails") != null ? mp.get("ErrorDetails").toString() : null);
+
+				// Convert Data field if present
+				if (mp.get("Data") != null) {
+					String datas = mp.get("Data").toString();
+					byte[] dt = datas.getBytes(StandardCharsets.UTF_8);
+					invoiceResponseDTO.setData(dt);
+					if (invoiceResponseDTO.getData() != null) {
+						String decryptedText = decryptBySymmetricKey(datas, sek);
+						ObjectMapper objectMapper3 = new ObjectMapper();
+						Map<String, Object> decryptedMap = objectMapper3.readValue(decryptedText, Map.class);
+
+						IRNResponseDTO iRNResponseDTO = new IRNResponseDTO();
+						
+//						irnResponseVO.setCancel("T");
+//						irnResponseVO.setCanceldate(decryptedMap.get("CancelDate").toString());
+						irnResponseRepo.save(irnResponseVO);
+
+						for (EInvoiceVO eInvoiceVO : eInvoiceVOs) {
+//							eInvoiceVO.setCanceldate(decryptedMap.get("CancelDate").toString());
+							updatedEInvoiceVOs.add(eInvoiceVO); 
+						}
+
+						eInvoiceRepo.saveAll(updatedEInvoiceVOs);
+					}
+				} else {
+					
+				}
+				message = "IRN Genaretd Successfully";
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null; 
+			}
+		}
+		Map<String, Object> response = new HashMap<>();
+		response.put("message", message);
+		return response;
 	}
 }

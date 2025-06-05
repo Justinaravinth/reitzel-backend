@@ -111,6 +111,8 @@ public class EInvoiceVO {
 
 	private String ewbvalidtill;
 	
+//	private String canceldate;
+	
 	
 	
 	@Lob

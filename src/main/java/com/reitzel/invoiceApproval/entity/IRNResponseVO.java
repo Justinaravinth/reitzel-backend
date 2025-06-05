@@ -45,6 +45,10 @@ public class IRNResponseVO {
 	
 	private String docid;
 	
+//	private String cancel;
+	
+//	private String canceldate;
+	
 	private LocalDateTime createdOn= LocalDateTime.now();
 
 }

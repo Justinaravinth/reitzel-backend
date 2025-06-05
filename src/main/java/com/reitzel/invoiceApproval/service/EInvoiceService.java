@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.reitzel.invoiceApproval.dto.CancelIRNDTO;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
 import com.reitzel.invoiceApproval.dto.EInvoiceGetToketDTO;
 import com.reitzel.invoiceApproval.dto.EWayGetToketDTO;
@@ -36,6 +37,10 @@ public interface EInvoiceService {
 	EwayBillNonIRNDTO generateEwayBillByNonIRN(String docIds);
 
 	Map<String, Object> createEWayBillNonIRN(List<String> docId) throws JsonProcessingException;
+
+	CancelIRNDTO cancelIRN(String docIds);
+
+	Map<String, Object> cancelIRNInvoice(List<String> docIds) throws JsonProcessingException;
 
 	
 

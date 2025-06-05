@@ -122,6 +122,9 @@ public interface EInvoiceRepo extends JpaRepository<EInvoiceVO, Long> {
 
 	@Query(nativeQuery = true, value = "select suptype from einvoice where docid=?1 group by suptype")
 	String getSupType(String irn);
+
+	@Query(nativeQuery = true,value = "select irn from einvoice where docid=?1 group by irn")
+	Set<Object[]> getIrnDetailsForCancel(String docId);
 	
 
 

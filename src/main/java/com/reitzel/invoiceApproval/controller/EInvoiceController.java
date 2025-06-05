@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.reitzel.invoiceApproval.common.CommonConstant;
 import com.reitzel.invoiceApproval.common.UserConstants;
+import com.reitzel.invoiceApproval.dto.CancelIRNDTO;
 import com.reitzel.invoiceApproval.dto.EInvoiceDTO;
 import com.reitzel.invoiceApproval.dto.EInvoiceGetToketDTO;
 import com.reitzel.invoiceApproval.dto.EwayBillDTO;
@@ -185,5 +186,30 @@ public class EInvoiceController extends BaseController  {
 		}
 		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
 		return ResponseEntity.ok().body(ewayBillDTO);
+	}
+	
+	@GetMapping("/cancelIRN")
+	public ResponseEntity<CancelIRNDTO> cancelIRN(@RequestParam String docid) {
+		String methodName = "cancelIRN()";
+		LOGGER.debug(CommonConstant.STARTING_METHOD, methodName);
+		String errorMsg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<>();
+		ResponseDTO responseDTO = null;
+		CancelIRNDTO cancelIRNDTO = new CancelIRNDTO();
+		try {
+			cancelIRNDTO = eInvoiceService.cancelIRN(docid);
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+			LOGGER.error(UserConstants.ERROR_MSG_METHOD_NAME, methodName, errorMsg);
+		}
+		if (StringUtils.isBlank(errorMsg)) {
+			responseObjectsMap.put(CommonConstant.STRING_MESSAGE, "EWayBill Information Get Successfully");
+			responseObjectsMap.put("cancelIRNDTO", cancelIRNDTO);
+			responseDTO = createServiceResponse(responseObjectsMap);
+		} else {
+			responseDTO = createServiceResponseError(responseObjectsMap, "EWayBill Information Get Filed", errorMsg);
+		}
+		LOGGER.debug(CommonConstant.ENDING_METHOD, methodName);
+		return ResponseEntity.ok().body(cancelIRNDTO);
 	}
 }

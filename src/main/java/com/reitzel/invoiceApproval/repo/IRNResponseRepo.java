@@ -6,4 +6,6 @@ import com.reitzel.invoiceApproval.entity.IRNResponseVO;
 
 public interface IRNResponseRepo extends JpaRepository<IRNResponseVO, Long> {
 
+	IRNResponseVO findByDocid(String docId);
+
 }
