@@ -653,6 +653,16 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 							ewayResponseVO1.setEwvalidtill(decryptedMap.get("EwbValidTill") != null
 									? decryptedMap.get("EwbValidTill").toString()
 									: "");
+							ewayResponseVO1.setRemarks(decryptedMap.get("Remarks") != null
+									? decryptedMap.get("Remarks").toString()
+									: "");
+							if (mp.get("InfoDtls") != null) {
+				                List<Map<String, Object>> infoDtlsList = (List<Map<String, Object>>) mp.get("InfoDtls");
+				                if (!infoDtlsList.isEmpty()) {
+				                    Object desc = infoDtlsList.get(0).get("Desc");
+				                    ewayResponseVO1.setAlert(desc != null ? desc.toString() : "");
+				                }
+							}
 							ewayResponseVO1.setIrn(dto.getIrn());
 
 							for (EInvoiceVO eInvoiceVO1 : eInvoiceVOs) {

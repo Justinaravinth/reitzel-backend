@@ -26,6 +26,8 @@ public class EwayResponseVO {
 	private Long id;
 
 	private String Ewbno;
+	
+	private String remarks;
 
 	private String Ewbdate;
 
