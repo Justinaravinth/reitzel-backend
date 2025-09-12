@@ -291,9 +291,9 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 
 			payloadDTO.setData(encryptedName);
 			// SandBox API
-//			String url = "https://einv1api.gstsandbox.nic.in/eicore/v1.03/Invoice";
+			String url = "https://einv1api.gstsandbox.nic.in/eicore/v1.03/Invoice";
 			// Live API
-			 String url = "https://api.einvoice1.gst.gov.in/eicore/v1.03/Invoice";
+//			 String url = "https://api.einvoice1.gst.gov.in/eicore/v1.03/Invoice";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("client_id", clientId);
 			headers.set("client_secret", clientSecret);
@@ -573,9 +573,9 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			payloadDTO.setData(encryptedName);
 
 			// SandBox API
-//			String url = "https://einv1api.gstsandbox.nic.in/eiewb/v1.03/ewaybill";
+			String url = "https://einv1api.gstsandbox.nic.in/eiewb/v1.03/ewaybill";
 			// Live API
-			String url ="https://api.einvoice1.gst.gov.in/eiewb/v1.03/ewaybill";
+//			String url ="https://api.einvoice1.gst.gov.in/eiewb/v1.03/ewaybill";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("client_id", clientId);
 			headers.set("client_secret", clientSecret);
@@ -839,9 +839,9 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			payloadDTO.setData(encryptedPayload);
 
 			// SandBox API
-//			String url = "https://einv1api.gstsandbox.nic.in/eivital/v1.04/auth";
+			String url = "https://einv1api.gstsandbox.nic.in/eivital/v1.04/auth";
 			// Live API
-			 String url = "https://api.einvoice1.gst.gov.in/eivital/v1.04/auth";
+//			 String url = "https://api.einvoice1.gst.gov.in/eivital/v1.04/auth";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("client_id", clientId);
 			headers.set("client_secret", clientSecret);
@@ -1125,10 +1125,10 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 			payloadDTO.setData(encryptedName);
 			payloadDTO.setAction("GENEWAYBILL");
 			// Sandbox
-//			String url = "https://ewb1api.gstsandbox.nic.in/ewaybillapi/v1.03/ewayapi";
+			String url = "https://ewb1api.gstsandbox.nic.in/ewaybillapi/v1.03/ewayapi";
 
 			// Live
-		    String url = "https://api.ewaybillgst.gov.in/v1.03/ewayapi";
+//		    String url = "https://api.ewaybillgst.gov.in/v1.03/ewayapi";
 			HttpHeaders headers = new HttpHeaders();
 			headers.set("client_id", clientId);
 			headers.set("client_secret", clientSecret);
