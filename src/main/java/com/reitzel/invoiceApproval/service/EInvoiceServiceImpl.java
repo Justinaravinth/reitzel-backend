@@ -208,7 +208,7 @@ public class EInvoiceServiceImpl implements EInvoiceService {
 				itemDTO.setPrdDesc(item[1].toString());
 				itemDTO.setIsServc(item[2].toString());
 				itemDTO.setHsnCd(item[3].toString());
-				itemDTO.setQty(Integer.parseInt(item[4].toString()));
+				itemDTO.setQty(Double.parseDouble(item[4].toString()));
 				itemDTO.setUnitPrice(Double.parseDouble(item[5].toString()));
 				itemDTO.setTotAmt(Double.parseDouble(item[6].toString()));
 				itemDTO.setAssAmt(Double.parseDouble(item[7].toString()));

@@ -27,7 +27,7 @@ public class ItemDTO {
     private String Barcde ;
 
     @JsonProperty("Qty")
-    private int Qty;
+    private double Qty;
 
     @JsonProperty("FreeQty")
     private int FreeQty ;
